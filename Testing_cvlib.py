@@ -13,7 +13,7 @@ monitor = None
 webcam = None
 
 # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
-type_of_input = 'w'
+type_of_input = 'sp'
 
 
 

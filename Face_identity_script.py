@@ -27,7 +27,7 @@ for (subdirs, dirs, files) in os.walk(datasets):
             images.append(cv2.imread(path, 0)) 
             lables.append(int(lable)) 
         id += 1
-(width, height) = (130, 100) 
+(width, height) = (200, 200) 
   
 # Create a Numpy array from the two lists above 
 (images, lables) = [numpy.array(lis) for lis in [images, lables]] 
@@ -71,24 +71,27 @@ while True:
 
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
+
     #eyes = eye_cascade.detectMultiScale(gray, 1.3, 5)
     for (x, y, w, h) in faces: 
         # cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2) 
         face = gray[y:y + h, x:x + w]
         roi_color = img[y:y+h, x:x+w]
         #eyes = eye_cascade.detectMultiScale(face)
+
         # l_eye = left_eye_cascade.detectMultiScale(face)
         face_resize = cv2.resize(face, (width, height)) 
         # Try to recognize the face 
         prediction = model.predict(face_resize) 
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 3) 
+
         #for (ex,ey,ew,eh) in eyes:
             #cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),3)
         # for (ex,ey,ew,eh) in l_eye:
         #     cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(100,255,0),1)
         
        
-        if prediction[1]<140: 
+        if prediction[1]<500: 
   
            cv2.putText(img, '% s - %.0f' % 
 (names[prediction[0]], prediction[1]), (x-10, y-10),  

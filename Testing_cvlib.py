@@ -12,7 +12,7 @@ monitor = None
 
 
 # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
-type_of_input = 'sp'
+type_of_input = 'v'
 
 
 
@@ -28,10 +28,10 @@ elif type_of_input == 'sp':
     monitor = {"top": 40, "left": 0, "width": 1300, "height": 1000}
 elif type_of_input == 'fs':
     # with fullscreen
-    monitor = sct.monitors[1]
+    monitor = sct.monitors[2]
 elif type_of_input =='v':
     # with video
-    webcam = cv2.VideoCapture('Zoom Meeting 2020-08-18 18-40-49.mp4')
+    webcam = cv2.VideoCapture('gallery.mp4')
 
 ash= 8
 printscreen=None

@@ -16,7 +16,6 @@ webcam = None
 type_of_input = 'sp'
 
 
-
 if type_of_input == 'w':
     # with webcam
     webcam = cv2.VideoCapture(0)
@@ -34,9 +33,41 @@ elif type_of_input =='v':
     # with video
     webcam = cv2.VideoCapture('gallery.mp4')
 
+
 ash= 8
 printscreen=None
 
+# Multiprocessing
+
+# def detected_multi(printscreen):
+#     face, confidence = cv.detect_face(printscreen)
+#     return face, confidence
+    # with concurrent.futures.ProcessPoolExecutor() as executor:
+    #     executor.map(detected_multi,(type_of_input,webcam))
+    #     # detected_multi(type_of_input,webcam)
+        
+    #     # press "Q" to stop
+    #     if cv2.waitKey(1) & 0xFF == ord('q'):
+    #         cv2.destroyAllWindows() 
+    #         break
+   
+queue_from_cam = multiprocessing.Queue()
+
+def cam_loop(queue_from_cam,webcam):
+    # print 'initializing cam'
+    # cap = cv2.VideoCapture(0)
+    # print 'querying frame'
+    # hello, img = cap.read()
+    
+
+    
+    
+    # print 'queueing image'
+    queue_from_cam.put(printscreen)
+    # print 'cam_loop done'
+
+cam_process = multiprocessing.Process(target=cam_loop,args=(queue_from_cam,webcam,))
+cam_process.start()
 
 while True:
     
@@ -52,7 +83,16 @@ while True:
         gray = cv2.resize(gray,(ash-1,ash))
         printscreen = numpy.delete(webcam, numpy.s_[-1], 2)
     
-
+    
+    
+    while queue_from_cam.empty():
+        pass
+    
+    # while True:
+        
+    
+        
+    
     # Using PIL
     # printscreen =  numpy.array(ImageGrab.grab(bbox=(0,40,1000,800)))
     

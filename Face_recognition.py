@@ -123,15 +123,12 @@ while True:
         # gray = cv2.resize(gray,(ash-1,ash))
         frame = np.delete(webcam, np.s_[-1], 2)
     
-<<<<<<< HEAD
+
 
         frame_count+=1
         framess.append(frame_count)
     
-=======
-  
->>>>>>> 42af6de614a5ebfd9be7057eb39abf4536bc56d1
-    
+
     
     # Resize frame of video to 1/4 size for faster face recognition processing
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -151,26 +148,19 @@ while True:
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
             name = "Unknown"
 
-<<<<<<< HEAD
-            #  # If a match was found in known_face_encodings, just use the first one.
-            # if True in matches:
-            #      first_match_index = matches.index(True)
-            #      name = known_face_names[first_match_index]
-            
-           # Or instead, use the known face with the smallest distance to the new face
-=======
+
              # If a match was found in known_face_encodings, just use the first one.
             # if True in matches:
             #      first_match_index = matches.index(True)
             #      name = known_face_names[first_match_index]
 
             # Or instead, use the known face with the smallest distance to the new face
->>>>>>> 42af6de614a5ebfd9be7057eb39abf4536bc56d1
+
             face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 name = known_face_names[best_match_index]
-<<<<<<< HEAD
+
                 print(name)
                 who.append(name)
             else:
@@ -179,12 +169,8 @@ while True:
             face_names.append(name)
 
     #process_this_frame = not process_this_frame
-=======
 
-            face_names.append(name)
-            
-    process_this_frame = not process_this_frame
->>>>>>> 42af6de614a5ebfd9be7057eb39abf4536bc56d1
+
 
 
     # Display the results

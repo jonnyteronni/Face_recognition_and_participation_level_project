@@ -42,7 +42,7 @@ if type_of_input == 'w':
     
 elif type_of_input == 'sp':
     # with screen_part
-    monitor = {"top": 300, "left": 0, "width": 400, "height": 200}
+    monitor = {"top": 300, "left": 0, "width": 1300, "height": 800}
 elif type_of_input == 'fs':
     # with fullscreen
     monitor = sct.monitors[2]
@@ -53,76 +53,77 @@ elif type_of_input =='v':
 
 
 
-# # video_capture = cv2.VideoCapture('Zoom Meeting 2020-08-20 14-38-19.mp4')
-# KNOWN_FACES_DIR = 'datasets'
-# known_faces = []
-# known_names= []
+# video_capture = cv2.VideoCapture('Zoom Meeting 2020-08-20 14-38-19.mp4')
+KNOWN_FACES_DIR = 'datasets'
+known_faces = []
+known_names= []
 
-# for name in os.listdir(KNOWN_FACES_DIR):
+for name in os.listdir(KNOWN_FACES_DIR):
 
-#     # Next we load every file of faces of known person
-#     for filename in os.listdir(f'{KNOWN_FACES_DIR}/{name}'):
+    # Next we load every file of faces of known person
+    for filename in os.listdir(f'{KNOWN_FACES_DIR}/{name}'):
     
-#         # Load an image
-#         image = face_recognition.load_image_file(f'{KNOWN_FACES_DIR}/{name}/{filename}')
-#         print(f'Next encoding - {name} - {filename}')
-#         # Get 128-dimension face encoding
-#         # Always returns a list of found faces, for this purpose we take first face only (assuming one face per image as you can't be twice on one image)
+        # Load an image
+        image = face_recognition.load_image_file(f'{KNOWN_FACES_DIR}/{name}/{filename}')
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR) 
+        print(f'Next encoding - {name} - {filename}')
+        # Get 128-dimension face encoding
+        # Always returns a list of found faces, for this purpose we take first face only (assuming one face per image as you can't be twice on one image)
         
-#         # for the faces not detected we need an exception
-#         try:
-#             encoding = face_recognition.face_encodings(image)[0]
-#         except IndexError as error_message:
-#             print(error_message,': Face not found')
+        # for the faces not detected we need an exception
+        try:
+            encoding = face_recognition.face_encodings(image)[0]
+        except IndexError as error_message:
+            print(error_message,': Face not found')
             
-#             # Remove file with no clear face
-#             os.remove(f'{KNOWN_FACES_DIR}/{name}/{filename}')
+            # Remove file with no clear face
+            os.remove(f'{KNOWN_FACES_DIR}/{name}/{filename}')
        
         
-#         # Append encodings and name
-#         known_faces.append(encoding)
-#         known_names.append(name)
+        # Append encodings and name
+        known_faces.append(encoding)
+        known_names.append(name)
 
 
 
 
-# Encoding single samples ------------------------------
+# # Encoding single samples ------------------------------
 
-# Load a sample picture and learn how to recognize it.
-inverno_image = face_recognition.load_image_file("face_recognition/inverno.jpg")
-inverno_face_encoding = face_recognition.face_encodings(inverno_image)[0]
+# # Load a sample picture and learn how to recognize it.
+# inverno_image = face_recognition.load_image_file("face_recognition/inverno.jpg")
+# inverno_face_encoding = face_recognition.face_encodings(inverno_image)[0]
 
-# Load a second sample picture and learn how to recognize it.
-antero_image = face_recognition.load_image_file("face_recognition/antero.JPG")
-antero_face_encoding = face_recognition.face_encodings(antero_image)[0]
+# # Load a second sample picture and learn how to recognize it.
+# antero_image = face_recognition.load_image_file("face_recognition/antero.JPG")
+# antero_face_encoding = face_recognition.face_encodings(antero_image)[0]
 
-jose_image = face_recognition.load_image_file("face_recognition/Jose.PNG")
-jose_face_encoding = face_recognition.face_encodings(jose_image)[0]
+# jose_image = face_recognition.load_image_file("face_recognition/Jose.PNG")
+# jose_face_encoding = face_recognition.face_encodings(jose_image)[0]
 
-guillaume_image = face_recognition.load_image_file("face_recognition/guillaume.png")
-guillaume_face_encoding = face_recognition.face_encodings(guillaume_image)[0]
+# guillaume_image = face_recognition.load_image_file("face_recognition/guillaume.png")
+# guillaume_face_encoding = face_recognition.face_encodings(guillaume_image)[0]
 
-# zoe_image = face_recognition.load_image_file("face_recognition/zoe.png")
-# zoe_face_encoding = face_recognition.face_encodings(zoe_image)[0]
+# pedro_image = face_recognition.load_image_file("face_recognition/pedro.png")
+# pedro_face_encoding = face_recognition.face_encodings(pedro_image)[0]
 
-#------------------------------------------------
+# #------------------------------------------------
 
-# Create arrays of known face encodings and their names
-known_faces = [
-    inverno_face_encoding,
-    antero_face_encoding,
-    guillaume_face_encoding,
-    jose_face_encoding
-    # zoe_face_encoding
+# # Create arrays of known face encodings and their names
+# known_faces = [
+#     inverno_face_encoding,
+#     antero_face_encoding,
+#     guillaume_face_encoding,
+#     jose_face_encoding
+#     pedro_face_encoding
     
-]
-known_names = [
-    "Inverno",
-    "Antero",
-    "Guilhaume",
-    "Jose"
-    # "Zoe",
-]
+# ]
+# known_names = [
+#     "Inverno",
+#     "Antero",
+#     "Guilhaume",
+#     "Jose"
+#     "Pedro",
+# ]
 
 # Initialize some variables
 face_locations = []
@@ -146,7 +147,11 @@ while True:
         # gray = cv2.resize(gray,(ash-1,ash))
         frame = np.delete(webcam, np.s_[-1], 2)
 
-    
+    # Frame from RGB to Gray
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)    
+
+
+
     # Resize frame of video to 1/4 size for faster face recognition processing
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 

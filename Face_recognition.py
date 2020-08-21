@@ -99,6 +99,12 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
+
+who=[]
+framess=[]
+frame_count=0
+
+
 while True:
     # Grab a single frame of video
     # ret, frame = video_capture.read()
@@ -115,7 +121,9 @@ while True:
         # gray = cv2.resize(gray,(ash-1,ash))
         frame = np.delete(webcam, np.s_[-1], 2)
     
-    
+
+        frame_count+=1
+        framess.append(frame_count)
     
     
     
@@ -137,20 +145,24 @@ while True:
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
             name = "Unknown"
 
-             # If a match was found in known_face_encodings, just use the first one.
-            if True in matches:
-                 first_match_index = matches.index(True)
-                 name = known_face_names[first_match_index]
-
-            # Or instead, use the known face with the smallest distance to the new face
-            #face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
-            #best_match_index = np.argmin(face_distances)
-            #if matches[best_match_index]:
-             #   name = known_face_names[best_match_index]
+            #  # If a match was found in known_face_encodings, just use the first one.
+            # if True in matches:
+            #      first_match_index = matches.index(True)
+            #      name = known_face_names[first_match_index]
+            
+           # Or instead, use the known face with the smallest distance to the new face
+            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+            best_match_index = np.argmin(face_distances)
+            if matches[best_match_index]:
+                name = known_face_names[best_match_index]
+                print(name)
+                who.append(name)
+            else:
+                who.append("none")
 
             face_names.append(name)
 
-    process_this_frame = not process_this_frame
+    #process_this_frame = not process_this_frame
 
 
     # Display the results
@@ -175,6 +187,7 @@ while True:
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+        cv2.destroyAllWindows()
 
 # Release handle to the webcam
 webcam.release()

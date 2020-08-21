@@ -5,6 +5,7 @@ from mss import mss
 import sys
 import os
 import time
+
 # This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
 # other example, but it includes some basic performance tweaks to make things run a lot faster:
 #   1. Process each video frame at 1/4 resolution (though still display it at full resolution)
@@ -29,7 +30,7 @@ type_of_input = 'sp'
 MODEL_LOCATION = 'hog'
 
 # large or small. Small is faster but less accurate
-MODEL_ENCODING = 'large'
+MODEL_ENCODING = 'small'
 
 # How many times to re-sample the face when calculating encoding. Higher is more accurate, but slower (i.e. 100 is 100x slower)
 # Only integers
@@ -39,7 +40,7 @@ NUM_JITTERS_ENCODING = 1
 TOLERANCE_RECOGNITION = 0.6
 
 # Resize of 
-resize_value = 1
+# resize_value = 1
 
 # -------------
 
@@ -73,39 +74,20 @@ elif type_of_input =='v':
 
 
 
-# video_capture = cv2.VideoCapture('Zoom Meeting 2020-08-20 14-38-19.mp4')
-KNOWN_FACES_DIR = 'datasets'
+# Get image information
 known_faces = []
 known_names= []
 
-for name in os.listdir(KNOWN_FACES_DIR):
+face_array = np.genfromtxt('models/known_faces_model.csv',delimiter=',')
+name_array = np.genfromtxt('models/known_names_model.csv',delimiter=',',dtype='object')
 
-    # Next we load every file of faces of known person
-    for filename in os.listdir(f'{KNOWN_FACES_DIR}/{name}'):
-    
-        # Load an image
-        image = face_recognition.load_image_file(f'{KNOWN_FACES_DIR}/{name}/{filename}')
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR) 
-        print(f'Next encoding - {name} - {filename}')
-        # Get 128-dimension face encoding
-        # Always returns a list of found faces, for this purpose we take first face only (assuming one face per image as you can't be twice on one image)
-        
-        # for the faces not detected we need an exception
-        try:
-            encoding = face_recognition.face_encodings(image,num_jitters = 1)[0]
-        except IndexError as error_message:
-            print(error_message,': Face not found')
-            
-            # Remove file with no clear face
-            os.remove(f'{KNOWN_FACES_DIR}/{name}/{filename}')
-       
-        
-        # Append encodings and name
-        known_faces.append(encoding)
-        known_names.append(name)
+# face and name arrays in a list format
+for face in face_array:
+    known_faces.append(face)
 
-# known_faces = np.genfromtxt('models/known_faces_model.csv',delimiter=',')
-# known_names= np.genfromtxt('models/known_names_model.csv',delimiter=',')
+for name in name_array:
+    known_names.append(str(name,encoding='ascii'))
+
 
 
 
@@ -136,11 +118,10 @@ while True:
     # Frame from RGB to Gray
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)    
 
-
-
     # Resize frame of video to 1/4 size for faster face recognition processing
-    small_frame = cv2.resize(frame, (0, 0), fx=1, fy=1)
-
+    # small_frame = cv2.resize(frame, (0, 0), fx=1, fy=1)
+    small_frame = frame
+    
     # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
     rgb_small_frame = small_frame[:, :, ::-1]
 
@@ -175,10 +156,10 @@ while True:
     # Display the results
     for (top, right, bottom, left), name in zip(face_locations, face_names):
         # Scale back up face locations since the frame we detected in was scaled to 1/4 size
-        top *= 1
-        right *= 1
-        bottom *= 1
-        left *= 1
+        # top *= 1
+        # right *= 1
+        # bottom *= 1
+        # left *= 1
 
         # Draw a box around the face
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
@@ -189,14 +170,15 @@ while True:
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
     # Display the resulting image
-    cv2.imshow('Video', frame)
+    cv2.imshow('Smile you are on camera!!!', frame)
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
         cv2.destroyAllWindows()
         break
-    print(time.time() - initial_frame)
+    print(1/(time.time() - initial_frame))
 
 # Release handle to the webcam
-webcam.release()
+if type_of_input == 'w':
+    webcam.release()
 cv2.destroyAllWindows()

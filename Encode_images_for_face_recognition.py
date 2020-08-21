@@ -26,7 +26,7 @@ for name in os.listdir(KNOWN_FACES_DIR):
         
         # for the faces not detected we need an exception
         try:
-            encoding = face_recognition.face_encodings(image,num_jitters = 10)[0]
+            encoding = face_recognition.face_encodings(image,num_jitters = 1)[0]
         except IndexError as error_message:
             print(error_message,': Face not found')
             

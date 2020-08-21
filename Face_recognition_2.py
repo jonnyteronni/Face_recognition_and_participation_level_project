@@ -23,7 +23,7 @@ import os
 # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
 
 
-type_of_input = 'v'
+type_of_input = 'sp'
 
 # Check what is the OS running
 
@@ -42,7 +42,7 @@ if type_of_input == 'w':
     
 elif type_of_input == 'sp':
     # with screen_part
-    monitor = {"top": 300, "left": 0, "width": 800, "height": 440}
+    monitor = {"top": 300, "left": 0, "width": 400, "height": 200}
 elif type_of_input == 'fs':
     # with fullscreen
     monitor = sct.monitors[2]
@@ -53,8 +53,40 @@ elif type_of_input =='v':
 
 
 
-# video_capture = cv2.VideoCapture('Zoom Meeting 2020-08-20 14-38-19.mp4')
+# # video_capture = cv2.VideoCapture('Zoom Meeting 2020-08-20 14-38-19.mp4')
+# KNOWN_FACES_DIR = 'datasets'
+# known_faces = []
+# known_names= []
 
+# for name in os.listdir(KNOWN_FACES_DIR):
+
+#     # Next we load every file of faces of known person
+#     for filename in os.listdir(f'{KNOWN_FACES_DIR}/{name}'):
+    
+#         # Load an image
+#         image = face_recognition.load_image_file(f'{KNOWN_FACES_DIR}/{name}/{filename}')
+#         print(f'Next encoding - {name} - {filename}')
+#         # Get 128-dimension face encoding
+#         # Always returns a list of found faces, for this purpose we take first face only (assuming one face per image as you can't be twice on one image)
+        
+#         # for the faces not detected we need an exception
+#         try:
+#             encoding = face_recognition.face_encodings(image)[0]
+#         except IndexError as error_message:
+#             print(error_message,': Face not found')
+            
+#             # Remove file with no clear face
+#             os.remove(f'{KNOWN_FACES_DIR}/{name}/{filename}')
+       
+        
+#         # Append encodings and name
+#         known_faces.append(encoding)
+#         known_names.append(name)
+
+
+
+
+# Encoding single samples ------------------------------
 
 # Load a sample picture and learn how to recognize it.
 inverno_image = face_recognition.load_image_file("face_recognition/inverno.jpg")
@@ -73,9 +105,10 @@ guillaume_face_encoding = face_recognition.face_encodings(guillaume_image)[0]
 # zoe_image = face_recognition.load_image_file("face_recognition/zoe.png")
 # zoe_face_encoding = face_recognition.face_encodings(zoe_image)[0]
 
+#------------------------------------------------
 
 # Create arrays of known face encodings and their names
-known_face_encodings = [
+known_faces = [
     inverno_face_encoding,
     antero_face_encoding,
     guillaume_face_encoding,
@@ -83,7 +116,7 @@ known_face_encodings = [
     # zoe_face_encoding
     
 ]
-known_face_names = [
+known_names = [
     "Inverno",
     "Antero",
     "Guilhaume",
@@ -112,9 +145,7 @@ while True:
         # gray = cv2.cvtColor(webcam, cv2.COLOR_BGR2GRAY)
         # gray = cv2.resize(gray,(ash-1,ash))
         frame = np.delete(webcam, np.s_[-1], 2)
-    
-  
-    
+
     
     # Resize frame of video to 1/4 size for faster face recognition processing
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -131,7 +162,7 @@ while True:
         face_names = []
         for face_encoding in face_encodings:
             # See if the face is a match for the known face(s)
-            matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+            matches = face_recognition.compare_faces(known_faces, face_encoding)
             name = "Unknown"
 
             # # If a match was found in known_face_encodings, just use the first one.
@@ -140,10 +171,10 @@ while True:
             #     name = known_face_names[first_match_index]
 
             # Or instead, use the known face with the smallest distance to the new face
-            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+            face_distances = face_recognition.face_distance(known_faces, face_encoding)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
-                name = known_face_names[best_match_index]
+                name = known_names[best_match_index]
 
             face_names.append(name)
             

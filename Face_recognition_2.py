@@ -97,11 +97,20 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
+# Time counts for facetime
+time_count={}
+initial_total = time.time()
+
+
+
 while True:
     # Grab a single frame of video
     # ret, frame = video_capture.read()
     
     initial_frame = time.time()
+    
+    # To count facetime for no people
+    name="none"
     
     if type_of_input == 'w' or type_of_input=='v':
         ret, frame = webcam.read()
@@ -150,7 +159,7 @@ while True:
 
             face_names.append(name)
             
-    process_this_frame = not process_this_frame
+    # process_this_frame = not process_this_frame
 
 
     # Display the results
@@ -176,7 +185,35 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         cv2.destroyAllWindows()
         break
+    
+    # Print FPSq
     print(1/(time.time() - initial_frame))
+    
+    # Facetime measures to time dictionary
+    if str(name) in time_count.keys():
+        time_count[name]=time_count[name]+(time.time() - initial_frame)
+    else:
+        time_count[name]=(time.time() - initial_frame)
+        
+# Split none time % to users
+if 'none' in time_count.keys():
+    for key in time_count.keys():
+        percentage = time_count[key]/sum(time_count.values())
+        time_count[key] += time_count['none'] * percentage
+        
+        
+    # time_to_users = time_count['none'] / (len(time_count)-1)
+    
+    # for key in time_count.keys():
+    #     time_count[key] += time_to_users
+    del(time_count['none'])
+
+
+# Print facetime stats
+print("Total", (time.time() - initial_total))
+print("Time loss",(time.time() - initial_total)-sum(time_count.values()))
+
+
 
 # Release handle to the webcam
 if type_of_input == 'w':

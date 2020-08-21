@@ -107,16 +107,12 @@ who=[]
 framess=[]
 frame_count=0
 
-time_count={}
-
-initial_total = time.time()
 
 while True:
     # Grab a single frame of video
     # ret, frame = video_capture.read()
     
     initial_frame = time.time()
-    name="none"
     
     if type_of_input == 'w' or type_of_input=='v':
         ret, frame = webcam.read()
@@ -168,8 +164,8 @@ while True:
                 print(name)
                 who.append(name)
             face_names.append(name)
-        # else:
-        #     who.append("none")
+        else:
+            who.append("none")
 
     #process_this_frame = not process_this_frame
 
@@ -197,15 +193,11 @@ while True:
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
-        cv2.destroyAllWindows()
         break
+        cv2.destroyAllWindows()
+        
     print(time.time() - initial_frame)
-    if str(name) in time_count.keys():
-        time_count[name]=time_count[name]+(time.time() - initial_frame)
-    else:
-        time_count[name]=(time.time() - initial_frame)
-print("Total", (time.time() - initial_total))
-print("Time loss",(time.time() - initial_total)-sum(time_count.values()))
+
 # Release handle to the webcam
 webcam.release()
 cv2.destroyAllWindows()

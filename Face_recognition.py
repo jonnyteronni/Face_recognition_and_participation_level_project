@@ -23,7 +23,7 @@ import os
 # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
 
 
-type_of_input = 'sp'
+type_of_input = 'fs'
 
 # Check what is the OS running
 
@@ -64,14 +64,16 @@ inverno_face_encoding = face_recognition.face_encodings(inverno_image)[0]
 antero_image = face_recognition.load_image_file("face_recognition/antero.JPG")
 antero_face_encoding = face_recognition.face_encodings(antero_image)[0]
 
-jose_image = face_recognition.load_image_file("face_recognition/Jose.PNG")
+jose_image = face_recognition.load_image_file("face_recognition/jose.PNG")
 jose_face_encoding = face_recognition.face_encodings(jose_image)[0]
 
 guillaume_image = face_recognition.load_image_file("face_recognition/guillaume.png")
 guillaume_face_encoding = face_recognition.face_encodings(guillaume_image)[0]
 
-# zoe_image = face_recognition.load_image_file("face_recognition/zoe.png")
-# zoe_face_encoding = face_recognition.face_encodings(zoe_image)[0]
+pedro_image = face_recognition.load_image_file("face_recognition/pedro.png")
+pedro_face_encoding = face_recognition.face_encodings(pedro_image)[0]
+
+
 
 
 # Create arrays of known face encodings and their names
@@ -79,16 +81,16 @@ known_face_encodings = [
     inverno_face_encoding,
     antero_face_encoding,
     guillaume_face_encoding,
-    jose_face_encoding
-    # zoe_face_encoding
+    jose_face_encoding,
+    pedro_face_encoding
     
 ]
 known_face_names = [
     "Inverno",
     "Antero",
-    "Guilhaume",
-    "Jose"
-    # "Zoe",
+    "Guillaume",
+    "Jose",
+    "Pedro"
 ]
 
 # Initialize some variables
@@ -135,16 +137,16 @@ while True:
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
             name = "Unknown"
 
-            # # If a match was found in known_face_encodings, just use the first one.
-            # if True in matches:
-            #     first_match_index = matches.index(True)
-            #     name = known_face_names[first_match_index]
+             # If a match was found in known_face_encodings, just use the first one.
+            if True in matches:
+                 first_match_index = matches.index(True)
+                 name = known_face_names[first_match_index]
 
             # Or instead, use the known face with the smallest distance to the new face
-            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
-            best_match_index = np.argmin(face_distances)
-            if matches[best_match_index]:
-                name = known_face_names[best_match_index]
+            #face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+            #best_match_index = np.argmin(face_distances)
+            #if matches[best_match_index]:
+             #   name = known_face_names[best_match_index]
 
             face_names.append(name)
 

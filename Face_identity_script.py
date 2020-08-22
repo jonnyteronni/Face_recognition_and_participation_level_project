@@ -44,6 +44,8 @@ face_cascade = cv2.CascadeClassifier(face_cascade )
 sct = mss()
 monitor = sct.monitors[2]
 #monitor = {"top": 40, "left": 0, "width": 1000, "height": 640}
+
+if 
 while True: 
     
     # Give screen to opencv

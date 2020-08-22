@@ -108,7 +108,7 @@ while True:
     # ret, frame = video_capture.read()
     
     initial_frame = time.time()
-    
+    name="none"
 
     if type_of_input == 'w' or type_of_input=='v':
         ret, frame = webcam.read()
@@ -201,7 +201,7 @@ while True:
 
         
         
-# Split none time % to users
+#Split none time % to users
 if 'none' in time_count.keys():
     for key in time_count.keys():
         percentage = time_count[key]/sum(time_count.values())

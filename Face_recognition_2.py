@@ -101,13 +101,13 @@ process_this_frame = True
 time_count={}
 initial_total = time.time()
 
-none_counter=0
 
 while True:
     # Grab a single frame of video
     # ret, frame = video_capture.read()
     
     initial_frame = time.time()
+    name="none"
     
 
     if type_of_input == 'w' or type_of_input=='v':
@@ -154,12 +154,12 @@ while True:
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 name = known_names[best_match_index]
-                none_counter=0
-            else:
+
+            # else:
                 
-                # To count facetime for no people
-                name="none"
-                none_counter+=1
+            #     # To count facetime for no people
+            #     name="Unknown"
+
 
             face_names.append(name)
             
@@ -196,22 +196,24 @@ while True:
     # Facetime measures to time dictionary
     if str(name) in time_count.keys():
         time_count[name]=time_count[name]+(time.time() - initial_frame)
-    elif none_counter < 2:
+    else:
         time_count[name]=(time.time() - initial_frame)
+        
+
 
         
         
-# Split none time % to users
+##Split none time % to users
+time_count_copy=time_count.copy() # To delete after trials
+time_count_no_none=time_count.copy()
+time_count_no_none.pop("none", None)
+split_percentages={}
 if 'none' in time_count.keys():
     for key in time_count.keys():
-        percentage = time_count[key]/sum(time_count.values())
-        time_count[key] += time_count['none'] * percentage
-        
-        
-    # time_to_users = time_count['none'] / (len(time_count)-1)
-    
-    # for key in time_count.keys():
-    #     time_count[key] += time_to_users
+        percentage = time_count[key]/(sum(time_count.values())-time_count["none"])
+        split_percentages[key]=percentage
+    for key,perc in zip(time_count_no_none.keys(),split_percentages):
+        time_count[key] += time_count['none'] * split_percentages[key]
     del(time_count['none'])
 
 

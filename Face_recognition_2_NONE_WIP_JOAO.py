@@ -90,7 +90,6 @@ for name in name_array:
 
 
 
-
 # Initialize some variables
 face_locations = []
 face_encodings = []
@@ -110,6 +109,7 @@ while True:
     initial_frame = time.time()
     name="none"
     
+    print("beginning while",name)
 
     if type_of_input == 'w' or type_of_input=='v':
         ret, frame = webcam.read()
@@ -156,11 +156,12 @@ while True:
             if matches[best_match_index]:
                 name = known_names[best_match_index]
                 none_counter=0
+
             else:
                 
-                # To count facetime for no people
-                name="none"
-                none_counter+=1
+                #  To count facetime for no people like a break
+                None
+
 
             face_names.append(name)
             
@@ -195,31 +196,34 @@ while True:
     print(1/(time.time() - initial_frame))
     
     # Facetime measures to time dictionary
-    if str(name) in time_count.keys():
+    if (str(name) in time_count.keys()) & (none_counter<5): # Change here the number of frames we want to facetime
         time_count[name]=time_count[name]+(time.time() - initial_frame)
-    elif none_counter < 2:
+    else:
         time_count[name]=(time.time() - initial_frame)
+        
+    print("end while",name)
+    print("none counter",none_counter)
+    none_counter+=1
+
 
         
-        
-#Split none time % to users
+##Split none time % to users
+time_count_copy=time_count.copy() # To delete after trials
+time_count_no_none=time_count.copy()
+time_count_no_none.pop("none", None)
+split_percentages={}
 if 'none' in time_count.keys():
     for key in time_count.keys():
-        percentage = time_count[key]/sum(time_count.values())
-        time_count[key] += time_count['none'] * percentage
-        
-        
-    # time_to_users = time_count['none'] / (len(time_count)-1)
-    
-    # for key in time_count.keys():
-    #     time_count[key] += time_to_users
+        percentage = time_count[key]/(sum(time_count.values())-time_count["none"])
+        split_percentages[key]=percentage
+    for key,perc in zip(time_count_no_none.keys(),split_percentages):
+        time_count[key] += time_count['none'] * split_percentages[key]
     del(time_count['none'])
 
 
 # Print facetime stats
 print("Total", (time.time() - initial_total))
 print("Time loss",(time.time() - initial_total)-sum(time_count.values()))
-
 
 
 # Release handle to the webcam

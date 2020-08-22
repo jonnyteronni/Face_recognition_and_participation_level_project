@@ -190,9 +190,9 @@ while webcam.isOpened():
 
     # Display the resulting image
     # if type_of_input != 'v':
-    # cv2.mshow('Smile you are on camera!!!', frame)
+    cv2.imshow('Smile you are on camera!!!', frame)
     
-  
+    
     
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):

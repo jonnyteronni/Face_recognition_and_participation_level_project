@@ -24,7 +24,7 @@ import time
 # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
 
 # -------DASHBOARD--------
-type_of_input = 'fs'
+type_of_input = 'w'
 
 # hog for cpu, cnn for GPU
 MODEL_LOCATION = 'hog'
@@ -70,7 +70,7 @@ elif type_of_input == 'fs':
 elif type_of_input =='v':
     # with video
     # webcam = cv2.VideoCapture('face_recognition/Zoom Meeting 2020-08-18 18-38-49.mp4')
-    webcam = cv2.VideoCapture('Zoom Meeting 2020-08-19 09-00-21.mp4')
+    webcam = cv2.VideoCapture('Speaker.mp4')
 
 
 
@@ -104,6 +104,7 @@ initial_total = time.time()
 none_counter=0
 
 #Timeseries
+#timeseries=[["start",0]]
 timeseries=[]
 
 while True:
@@ -148,6 +149,7 @@ while True:
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(known_faces, face_encoding, tolerance=TOLERANCE_RECOGNITION)
             name = "Unknown"
+            none_counter=0
 
             # # If a match was found in known_face_encodings, just use the first one.
             # if True in matches:
@@ -160,6 +162,7 @@ while True:
             if matches[best_match_index]:
                 name = known_names[best_match_index]
                 none_counter=0
+                
 
             face_names.append(name)
             
@@ -194,16 +197,16 @@ while True:
     print(1/(time.time() - initial_frame))
     
     # Facetime measures to time dictionary
-    if (str(name) in time_count.keys()) & (none_counter<5): # Change here the number of frames we want to facetime
+    if (str(name) in time_count.keys()) & (none_counter<4): # Change here the number of frames we want to facetime
         time_ite=time_count[name]+(time.time() - initial_frame)
         time_count[name]=time_ite
         # timeseries
-        timeseries.append([name,time_ite])
+        timeseries.append([name,(time.time() - initial_frame)])
     elif (none_counter>=5):
         time_ite=time_count["break_time"]+(time.time() - initial_frame)
         time_count["break_time"]=time_ite
         # timeseries  
-        timeseries.append(["break_time",time_ite])
+        timeseries.append(["break_time",time.time() - initial_frame])
     else:
         time_ite=(time.time() - initial_frame)
         time_count[name]=time_ite
@@ -239,3 +242,30 @@ print("Time loss",(time.time() - initial_total)-sum(time_count.values()))
 if type_of_input == 'w':
     webcam.release()
 cv2.destroyAllWindows()
+
+# time_p=0
+# time_p=[i[1]+i[1][x-1] for x,i in enumerate(timeseries[1:])]
+# print(time_p)
+
+# import pandas as pd
+# timeseries_df=pd.DataFrame(timeseries)
+# for i in timeseries_df[0].unique():
+#     timeseries_df[i]=timeseries_df[timeseries_df[0]==i][1].cumsum()
+# timeseries_df.fillna(0,inplace=True)
+# timeseries_df.drop([1],axis=1,inplace=True)
+
+# import matplotlib as plt
+# import numpy as np
+
+# plt.rcdefaults()
+# fig, ax = plt.subplots()
+
+# order=timeseries_df.max()[1:].sort_values().keys().tolist()
+# y_pos=np.arange(len(order))
+# x_speak=[]
+
+# for i in timeseries_df.iterrows():
+#     for ii in np.arange(len(order)):
+#         x_speak.append(i[1][order[ii]])
+
+    

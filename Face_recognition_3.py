@@ -58,7 +58,7 @@ elif type_of_input == 'fs':
 elif type_of_input =='v':
     # with video
     # webcam = cv2.VideoCapture('face_recognition/Zoom Meeting 2020-08-18 18-38-49.mp4')
-    webcam = cv2.VideoCapture('Speaker.mp4')
+    webcam = cv2.VideoCapture('10minSpeaker.mp4')
 
 
 

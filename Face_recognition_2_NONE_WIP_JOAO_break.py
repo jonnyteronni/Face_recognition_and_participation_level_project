@@ -266,6 +266,7 @@ cv2.destroyAllWindows()
 
 # for i in timeseries_df.iterrows():
 #     for ii in np.arange(len(order)):
-#         x_speak.append(i[1][order[ii]])
-
+#         x_speak.append(i[1][(order[ii])])
+#     ax.barh(y_pos, x_speak, align='center')
+#     plt.show()
     

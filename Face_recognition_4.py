@@ -21,7 +21,7 @@ else:
 # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
 
 # -------DASHBOARD--------
-type_of_input = 'fs'
+type_of_input = 'v'
 
 # hog for cpu, cnn for GPU
 MODEL_LOCATION = 'hog'
@@ -202,11 +202,6 @@ while True:
         if matches[best_match_index]:
             name = known_names[best_match_index]
             none_counter=0
-        # else:
-            
-        #     # To count facetime for no people
-        #     name="Unknown"
-
 
         face_names.append(name)
                 
@@ -293,7 +288,6 @@ cv2.destroyAllWindows()
 
 if (type_of_input == 'w') | (type_of_input == 'v'):
     length_video=webcam.get(cv2.CAP_PROP_POS_MSEC)/1000 #seconds
-    # total_frames=webcam.get(cv2.CAP_PROP_FRAME_COUNT)
     total_frames=frame_count
     length_each_frame=length_video/total_frames
 elif (type_of_input=='sp') | (type_of_input=='fs'):
@@ -314,11 +308,9 @@ for i in timeseries_df[0].unique():
     timeseries_df[i]=timeseries_df[i].cumsum()
     time_count[i]= timeseries_df[i].max()
 
-#timeseries_df.drop([1],axis=1,inplace=True)
         
 
 ##Split none time % to users
-#time_count_copy=time_count.copy() # To delete after trials
 time_count_no_none=time_count.copy()
 time_count_no_none.pop("none", None)
 time_count_no_none.pop("break_time", None)
@@ -335,6 +327,4 @@ if 'none' in time_count.keys():
     del(time_count['none'])
 
 
-plot_graphs(timeseries_df)
-
-
+plot_graphs(timeseries_df,length_each_frame)

@@ -7,8 +7,8 @@ import cv2
 
 
 # def encode_images():
-# video_capture = cv2.VideoCapture('Zoom Meeting 2020-08-20 14-38-19.mp4')
-KNOWN_FACES_DIR = 'datasets_others'
+
+KNOWN_FACES_DIR = 'datasets_main'
 known_faces = []
 known_names= []
 

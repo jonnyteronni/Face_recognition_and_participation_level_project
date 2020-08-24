@@ -8,7 +8,7 @@ import os
 import glob
 
 
-def plot_graphs(timeseries_df):
+def plot_graphs(timeseries_df,length_each_frame):
     timeseries_df2=timeseries_df.copy()
     timeseries_df2.pop(1)
     try:
@@ -30,7 +30,9 @@ def plot_graphs(timeseries_df):
     y_pos=np.arange(len(order))
     x_speak=[]
     ims=0
+    imss=[]
     
+
     for i in timeseries_df.iterrows():
         for ii in np.arange(len(order)):
             x_speak.append(i[1][(order[ii])])
@@ -41,25 +43,22 @@ def plot_graphs(timeseries_df):
         
         x_speak=[]
         ims+=1
+        imss.append(ims)
         
     #Saving the frames
         plt.savefig('./gif/all/'+str(ims)+'.png',dpi=150)
         plt.show()
         
     
-    # #Creating Gif
-    # folder = './gif/all' 
-    # files = [f"{folder}\\{file}" for file in (os.listdir(folder))]
-    
-    # teste=[]
-    
-    # # for file in os.listdir(folder): ########
-    # #     print(file) ################
-    
-    # images = [imageio.imread(file) for file in files]
-    # imageio.mimwrite('./gif/movie.gif', images, fps=1/length_each_frame)
+    #Creating Gif
+    folder = './gif/all' 
+    files = [f"{folder}\\{file}.png" for file in (imss)]
     
     
+    images = [imageio.imread(file) for file in files]
+    imageio.mimwrite('./gif/movie.gif', images, fps=1/length_each_frame)
+    
+
     
     
     # int(webcam.get(cv2.CAP_PROP_FPS)

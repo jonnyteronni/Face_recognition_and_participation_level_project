@@ -7,6 +7,7 @@ import sys
 # import os
 import time
 from Plot_graphs import plot_graphs
+import pandas as pd
 
 # Check the running OS to import mss
 
@@ -168,10 +169,6 @@ while True:
         if matches[best_match_index]:
             name = known_names[best_match_index]
             none_counter=0
-        # else:
-            
-        #     # To count facetime for no people
-        #     name="Unknown"
 
 
         face_names.append(name)
@@ -218,33 +215,14 @@ while True:
         # Facetime measures to time dictionary
     none_counter_limit=3 # Change here the number of frames we want to facetime for the breakt time
     if (none_counter>=none_counter_limit):
-        # time_ite=time_count["break_time"]+(time.time() - initial_frame)
-        # time_count["break_time"]=time_ite
-        # timeseries  
         timeseries.append(["break_time",1])
     else:
-        # time_ite=(time.time() - initial_frame)
-        # time_count[name]=time_ite
-         # timeseries      
         timeseries.append([name,1])
     
     none_counter+=1
     
 
 
-
-##Split none time % to users
-time_count_copy=time_count.copy() # To delete after trials
-time_count_no_none=time_count.copy()
-time_count_no_none.pop("none", None)
-split_percentages={}
-if 'none' in time_count.keys():
-    for key in time_count.keys():
-        percentage = time_count[key]/(sum(time_count.values())-time_count["none"])
-        split_percentages[key]=percentage
-    for key,perc in zip(time_count_no_none.keys(),split_percentages):
-        time_count[key] += time_count['none'] * split_percentages[key]
-    del(time_count['none'])
 
 
 # Print facetime stats
@@ -318,7 +296,6 @@ out.release()
 
 
 #Creating timeseries dataframe and cum sum
-import pandas as pd
 timeseries_df=pd.DataFrame(timeseries)
 timeseries_df[1]=pd.DataFrame(timeseries)[1]*length_each_frame
 for i in timeseries_df[0].unique():
@@ -327,11 +304,9 @@ for i in timeseries_df[0].unique():
     timeseries_df[i]=timeseries_df[i].cumsum()
     time_count[i]= timeseries_df[i].max()
 
-#timeseries_df.drop([1],axis=1,inplace=True)
-        
+       
 
 ##Split none time % to users
-#time_count_copy=time_count.copy() # To delete after trials
 time_count_no_none=time_count.copy()
 time_count_no_none.pop("none", None)
 time_count_no_none.pop("break_time", None)
@@ -348,6 +323,8 @@ if 'none' in time_count.keys():
     del(time_count['none'])
 
 
-plot_graphs(timeseries_df)
+plot_graphs(timeseries_df,length_each_frame)
+
+print(time_count)
 
 

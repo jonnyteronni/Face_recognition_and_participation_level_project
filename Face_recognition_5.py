@@ -6,7 +6,6 @@ import platform
 import sys
 # import os
 import time
-from Plot_graphs import plot_graphs
 import pandas as pd
 
 # Check the running OS to import mss
@@ -23,6 +22,8 @@ else:
 
 # -------DASHBOARD--------
 type_of_input = 'fs'
+
+video_input='Speaker.mp4'
 
 # hog for cpu, cnn for GPU
 MODEL_LOCATION = 'hog'
@@ -62,7 +63,7 @@ elif type_of_input == 'fs':
 elif type_of_input =='v':
     # with video
     # webcam = cv2.VideoCapture('face_recognition/Zoom Meeting 2020-08-18 18-38-49.mp4')
-    webcam = cv2.VideoCapture('Speaker.mp4')
+    webcam = cv2.VideoCapture(video_input)
 
 
 
@@ -87,7 +88,7 @@ RESIZE_FRAME = int(RESIZE_FRAME)
 RESIZE_FRAME_PERC = 1/RESIZE_FRAME
 
 # Time counts for facetime
-time_count={}
+
 initial_total = time.time()
 none_counter=0
 
@@ -295,36 +296,26 @@ out.release()
 
 
 
-#Creating timeseries dataframe and cum sum
-timeseries_df=pd.DataFrame(timeseries)
-timeseries_df[1]=pd.DataFrame(timeseries)[1]*length_each_frame
-for i in timeseries_df[0].unique():
-    timeseries_df[i]=timeseries_df[timeseries_df[0]==i][1]
-    timeseries_df[i].fillna(0,inplace=True)
-    timeseries_df[i]=timeseries_df[i].cumsum()
-    time_count[i]= timeseries_df[i].max()
+#Creating timeseries to export to sql
+timeseries_sql=pd.DataFrame(timeseries,columns=["name","time"])
 
-       
+timeseries_sql["time"]=timeseries_sql["time"]*length_each_frame
 
-##Split none time % to users
-time_count_no_none=time_count.copy()
-time_count_no_none.pop("none", None)
-time_count_no_none.pop("break_time", None)
-split_percentages={}
-if 'none' in time_count.keys():
-    for key in time_count.keys():
-        if 'break_time' in time_count.keys():
-            percentage = time_count[key]/(sum(time_count.values())-time_count["none"]-time_count["break_time"])
-        else:
-            percentage = time_count[key]/(sum(time_count.values())-time_count["none"])
-        split_percentages[key]=percentage        
-    for key,perc in zip(time_count_no_none.keys(),split_percentages):
-        time_count[key] += time_count['none'] * split_percentages[key]
-    del(time_count['none'])
+source={"w":"webcam","sp":"screen_part","fs":"fullscreen", "v":str("video"+"_"+video_input)}
+timeseries_sql["record_source"]=source[type_of_input]
+# timeseries_sql["date"]=pd.Timestamp(datetime.now())
 
+# import the module
+from sqlalchemy import create_engine
 
-plot_graphs(timeseries_df,length_each_frame)
+# create sqlalchemy engine
+engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}"
+                       .format(user="root",
+                               pw="tasmania",
+                               db="project9"))
 
-print(time_count)
+timeseries_sql.to_sql('timeseries', con = engine, if_exists = "append",index=False)
+
+print("Exported to SQL")
 
 

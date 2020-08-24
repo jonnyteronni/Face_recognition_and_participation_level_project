@@ -123,6 +123,7 @@ while True:
         if not ret:
             print("Could not read frame")
             sys.exit()
+        frame_count+=1
 
     elif type_of_input=='sp' or type_of_input=='fs':
         webcam = np.array(sct.grab(monitor))
@@ -236,7 +237,8 @@ print("Time loss",(time.time() - initial_total)-sum(time_count.values()))
 
 if (type_of_input == 'w') | (type_of_input == 'v'):
     length_video=webcam.get(cv2.CAP_PROP_POS_MSEC)/1000 #seconds
-    total_frames=webcam.get(cv2.CAP_PROP_FRAME_COUNT)
+    # total_frames=webcam.get(cv2.CAP_PROP_FRAME_COUNT)
+    total_frames=frame_count
     length_each_frame=length_video/total_frames
 elif (type_of_input=='sp') | (type_of_input=='fs'):
     length_video=(time.time() - initial_total)
@@ -279,9 +281,26 @@ import matplotlib.pyplot as plt
 import numpy as np
 import imageio
 import os
+import glob
+
+timeseries_df2=timeseries_df.copy()
+timeseries_df2.pop(1)
+try:
+    timeseries_df2.pop('break_time')
+except KeyError :
+    pass
+try:
+    timeseries_df2.pop('none')
+except KeyError :
+    pass
+    
+files = glob.glob('./gif/all/*')
+for f in files:
+    os.remove(f)
+
+order=timeseries_df2.max()[1:].sort_values(ascending=False).keys().tolist()
 
 
-order=timeseries_df.max()[1:].sort_values(ascending=False).keys().tolist()
 y_pos=np.arange(len(order))
 x_speak=[]
 ims=0
@@ -302,12 +321,19 @@ for i in timeseries_df.iterrows():
     plt.show()
     
 
-#Creating Gif
-folder = './gif/all' 
-files = [f"{folder}\\{file}" for file in os.listdir(folder)]
+# #Creating Gif
+# folder = './gif/all' 
+# files = [f"{folder}\\{file}" for file in (os.listdir(folder))]
 
-images = [imageio.imread(file) for file in files]
-imageio.mimwrite('./gif/movie.gif', images, fps=5)
+# teste=[]
+
+# # for file in os.listdir(folder): ########
+# #     print(file) ################
+
+# images = [imageio.imread(file) for file in files]
+# imageio.mimwrite('./gif/movie.gif', images, fps=1/length_each_frame)
+
+
 
 
 # int(webcam.get(cv2.CAP_PROP_FPS)

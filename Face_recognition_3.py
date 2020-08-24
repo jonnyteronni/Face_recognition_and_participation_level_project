@@ -58,7 +58,7 @@ elif type_of_input == 'fs':
 elif type_of_input =='v':
     # with video
     # webcam = cv2.VideoCapture('face_recognition/Zoom Meeting 2020-08-18 18-38-49.mp4')
-    webcam = cv2.VideoCapture('10minSpeaker.mp4')
+    webcam = cv2.VideoCapture('Speaker.mp4')
 
 
 
@@ -91,7 +91,19 @@ initial_total = time.time()
 # Output to save video file on exit
 frame_width = int(webcam.get(3))
 frame_height = int(webcam.get(4))
-out = cv2.VideoWriter('output.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
+
+
+fps = int(webcam.get(cv2.CAP_PROP_FPS))
+
+# Codec
+# fourcc = cv2.VideoWriter_fourcc(*'X264')
+# fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+# fourcc = cv2.VideoWriter_fourcc(*'H264')
+# cv2.VideoWriter_fourcc(*'XVID')
+# cv2.VideoWriter_fourcc(c1, c2, c3, c4)
+fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
+
+out = cv2.VideoWriter('output.mp4',fourcc, fps, (frame_width,frame_height))
 
 # Frame resizing to integer
 RESIZE_FRAME = int(RESIZE_FRAME)

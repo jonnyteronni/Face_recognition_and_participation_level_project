@@ -11,7 +11,7 @@ import time
 # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
 
 # -------DASHBOARD--------
-type_of_input = 'v'
+type_of_input = 'fs'
 
 # hog for cpu, cnn for GPU
 MODEL_LOCATION = 'hog'
@@ -74,21 +74,21 @@ for name in name_array:
     known_names.append(str(name,encoding='ascii'))
 
 
-# Initialize some variables
-face_locations = []
-face_encodings = []
-face_names = []
-process_this_frame = True
+# # Initialize some variables
+# face_locations = []
+# face_encodings = []
+# face_names = []
+# process_this_frame = True
 
-# Time counts for facetime
-time_count={}
-initial_total = time.time()
+# # Time counts for facetime
+# time_count={}
+# initial_total = time.time()
 
 
-# Output to save video file on exit
-frame_width = int(webcam.get(3))
-frame_height = int(webcam.get(4))
-out = cv2.VideoWriter('output.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
+# # Output to save video file on exit
+# frame_width = int(webcam.get(3))
+# frame_height = int(webcam.get(4))
+# out = cv2.VideoWriter('output.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
 
 while True:
     # Grab a single frame of video

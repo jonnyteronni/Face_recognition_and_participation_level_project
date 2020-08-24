@@ -37,7 +37,7 @@ NUM_JITTERS_ENCODING = 1
 TOLERANCE_RECOGNITION = 0.6
 
 # Frame resizing (integers 1 to X)
-RESIZE_FRAME = 3
+RESIZE_FRAME = 2
 
 
 # -------------
@@ -81,45 +81,9 @@ for name in name_array:
 
 
 
-
-# define variables for output video
-
-if type_of_input == 'w' or type_of_input=='v':
-    # frame size of webcam or video
-    frame_width = int(webcam.get(3))
-    frame_height = int(webcam.get(4))
-     
-    fps = int(webcam.get(cv2.CAP_PROP_FPS))
-    
-    # Codec
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    
-    
-    # Frame resizing to integer
-    RESIZE_FRAME = int(RESIZE_FRAME)
-    RESIZE_FRAME_PERC = 1/RESIZE_FRAME
-
-
-elif type_of_input=='sp' or type_of_input=='fs':
-    # frame size of webcam or video
-    frame_width = monitor['width']
-    frame_height = monitor['height']
-    
-    
-    fps = 20
-    
-    # Codec
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    
-    
-    # Frame resizing to integer
-    RESIZE_FRAME = int(RESIZE_FRAME)
-    RESIZE_FRAME_PERC = 1/RESIZE_FRAME
-
-
-# Output video
-out = cv2.VideoWriter('output.mp4',fourcc, fps, (frame_width,frame_height))
-
+# Frame resizing to integer
+RESIZE_FRAME = int(RESIZE_FRAME)
+RESIZE_FRAME_PERC = 1/RESIZE_FRAME
 
 # Time counts for facetime
 time_count={}
@@ -139,6 +103,8 @@ face_encodings = []
 face_names = []
 # process_this_frame = True
 
+
+frame_list = []
 
 # while webcam.isOpened():
 while True:
@@ -230,8 +196,10 @@ while True:
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
     # Save frame to output video
-    out.write(frame)
+    # out.write(frame)
 
+    frame_list.append(frame)
+    
     # Display the resulting image
     # if type_of_input != 'v':
     cv2.imshow('Smile you are on camera!!!', frame)
@@ -261,7 +229,10 @@ while True:
         timeseries.append([name,1])
     
     none_counter+=1
-        
+    
+
+
+
 ##Split none time % to users
 time_count_copy=time_count.copy() # To delete after trials
 time_count_no_none=time_count.copy()
@@ -283,10 +254,8 @@ print("Total", (time.time() - initial_total))
 # Release handle to the webcam
 if type_of_input == 'w':
     webcam.release()
-out.release()
+
 cv2.destroyAllWindows()
-
-
 
 
 #Length of video, total of frames and length of each frame
@@ -300,6 +269,50 @@ elif (type_of_input=='sp') | (type_of_input=='fs'):
     length_video=(time.time() - initial_total)
     total_frames=frame_count
     length_each_frame=length_video/total_frames
+
+
+
+# define variables for output video
+
+if type_of_input == 'w' or type_of_input=='v':
+    # frame size of webcam or video
+    frame_width = int(webcam.get(3))
+    frame_height = int(webcam.get(4))
+     
+    fps = int(webcam.get(cv2.CAP_PROP_FPS))
+    
+    # Codec
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    
+    
+    # Frame resizing to integer
+    RESIZE_FRAME = int(RESIZE_FRAME)
+    RESIZE_FRAME_PERC = 1/RESIZE_FRAME
+
+
+elif type_of_input=='sp' or type_of_input=='fs':
+    # frame size of webcam or video
+    frame_width = monitor['width']
+    frame_height = monitor['height']
+    
+    
+    fps = 1/length_each_frame
+    
+    # Codec
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    
+    
+    # Frame resizing to integer
+    RESIZE_FRAME = int(RESIZE_FRAME)
+    RESIZE_FRAME_PERC = 1/RESIZE_FRAME
+
+
+# Output file
+out = cv2.VideoWriter('output.mp4',fourcc, fps , (frame_width,frame_height))
+for frame in frame_list:
+    out.write(frame)
+
+out.release()
 
 
 

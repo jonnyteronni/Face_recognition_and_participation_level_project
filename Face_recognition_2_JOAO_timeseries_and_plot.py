@@ -253,7 +253,7 @@ for i in timeseries_df[0].unique():
     timeseries_df[i].fillna(0,inplace=True)
     timeseries_df[i]=timeseries_df[i].cumsum()
 
-timeseries_df.drop([1],axis=1,inplace=True)
+#timeseries_df.drop([1],axis=1,inplace=True)
 
 
 #Ploting timeseries of facetime
@@ -289,7 +289,7 @@ folder = './gif/all'
 files = [f"{folder}\\{file}" for file in os.listdir(folder)]
 
 images = [imageio.imread(file) for file in files]
-imageio.mimwrite('./gif/movie.gif', images, fps=5)
+imageio.mimwrite('./gif/movie.gif', images, fps=int(webcam.get(cv2.CAP_PROP_FPS)))
 
     # Parameters for saving
     # ---------------------

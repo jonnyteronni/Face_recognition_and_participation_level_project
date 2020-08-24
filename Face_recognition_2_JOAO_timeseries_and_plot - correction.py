@@ -98,14 +98,16 @@ process_this_frame = True
 
 # Time counts for facetime
 time_count={}
-time_count["break_time"]=0
 initial_total = time.time()
 
 none_counter=0
 
 #Timeseries
-#timeseries=[["start",0]]
 timeseries=[]
+
+#Frame count
+frame_count=0
+
 
 while True:
     # Grab a single frame of video
@@ -127,6 +129,7 @@ while True:
         # gray = cv2.cvtColor(webcam, cv2.COLOR_BGR2GRAY)
         # gray = cv2.resize(gray,(ash-1,ash))
         frame = np.delete(webcam, np.s_[-1], 2)
+        frame_count+=1
 
     # Frame from RGB to Gray
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)    
@@ -197,63 +200,78 @@ while True:
     print(1/(time.time() - initial_frame))
     
     # Facetime measures to time dictionary
-    if (str(name) in time_count.keys()) & (none_counter<4): # Change here the number of frames we want to facetime
-        time_ite=time_count[name]+(time.time() - initial_frame)
-        time_count[name]=time_ite
+    none_counter_limit=3 # Change here the number of frames we want to facetime for the breakt time
+    if (str(name) in time_count.keys()) & (none_counter<none_counter_limit): 
+        # time_ite=time_count[name]+(time.time() - initial_frame)
+        # time_count[name]=time_ite
         # timeseries
-        timeseries.append([name,(time.time() - initial_frame)])
-    elif (none_counter>=5):
-        time_ite=time_count["break_time"]+(time.time() - initial_frame)
-        time_count["break_time"]=time_ite
+        # timeseries.append([name,(time.time() - initial_frame)])
+        timeseries.append([name,1])
+    elif (none_counter>=none_counter_limit):
+        # time_ite=time_count["break_time"]+(time.time() - initial_frame)
+        # time_count["break_time"]=time_ite
         # timeseries  
-        timeseries.append(["break_time",time.time() - initial_frame])
+        timeseries.append(["break_time",1])
     else:
-        time_ite=(time.time() - initial_frame)
-        time_count[name]=time_ite
+        # time_ite=(time.time() - initial_frame)
+        # time_count[name]=time_ite
          # timeseries      
-        timeseries.append([name,time_ite])
+        timeseries.append([name,1])
         
     print("end while",name)
     print("none counter",none_counter)
     none_counter+=1
-
-
-        
-##Split none time % to users
-time_count_copy=time_count.copy() # To delete after trials
-time_count_no_none=time_count.copy()
-time_count_no_none.pop("none", None)
-split_percentages={}
-if 'none' in time_count.keys():
-    for key in time_count.keys():
-        percentage = time_count[key]/(sum(time_count.values())-time_count["none"])
-        split_percentages[key]=percentage        
-    for key,perc in zip(time_count_no_none.keys(),split_percentages):
-        time_count[key] += time_count['none'] * split_percentages[key]
-    del(time_count['none'])
-
-
-# Print facetime stats
-print("Total", (time.time() - initial_total))
-print("Time loss",(time.time() - initial_total)-sum(time_count.values()))
-
-
+    
 # Release handle to the webcam
 if type_of_input == 'w':
     webcam.release()
 cv2.destroyAllWindows()
 
+# Print facetime stats
+#print("Total", (time.time() - initial_total))
+print("Time loss",(time.time() - initial_total)-sum(time_count.values()))
 
+
+#Length of video, total of frames and length of each frame
+
+if (type_of_input == 'w') | (type_of_input == 'v'):
+    length_video=webcam.get(cv2.CAP_PROP_POS_MSEC)/1000 #seconds
+    total_frames=webcam.get(cv2.CAP_PROP_FRAME_COUNT)
+    length_each_frame=length_video/total_frames
+elif (type_of_input=='sp') | (type_of_input=='fs'):
+    length_video=(time.time() - initial_total)
+    total_frames=frame_count
+    length_each_frame=length_video/total_frames
 
 #Creating timeseries dataframe and cum sum
 import pandas as pd
 timeseries_df=pd.DataFrame(timeseries)
+timeseries_df[1]=pd.DataFrame(timeseries)[1]*length_each_frame
 for i in timeseries_df[0].unique():
     timeseries_df[i]=timeseries_df[timeseries_df[0]==i][1]
     timeseries_df[i].fillna(0,inplace=True)
     timeseries_df[i]=timeseries_df[i].cumsum()
+    time_count[i]= timeseries_df[i].max()
 
-timeseries_df.drop([1],axis=1,inplace=True)
+#timeseries_df.drop([1],axis=1,inplace=True)
+        
+
+##Split none time % to users
+#time_count_copy=time_count.copy() # To delete after trials
+time_count_no_none=time_count.copy()
+time_count_no_none.pop("none", None)
+time_count_no_none.pop("break_time", None)
+split_percentages={}
+if 'none' in time_count.keys():
+    for key in time_count.keys():
+        if 'break_time' in time_count.keys():
+            percentage = time_count[key]/(sum(time_count.values())-time_count["none"]-time_count["break_time"])
+        else:
+            percentage = time_count[key]/(sum(time_count.values())-time_count["none"])
+        split_percentages[key]=percentage        
+    for key,perc in zip(time_count_no_none.keys(),split_percentages):
+        time_count[key] += time_count['none'] * split_percentages[key]
+    del(time_count['none'])
 
 
 #Ploting timeseries of facetime
@@ -291,6 +309,8 @@ files = [f"{folder}\\{file}" for file in os.listdir(folder)]
 images = [imageio.imread(file) for file in files]
 imageio.mimwrite('./gif/movie.gif', images, fps=5)
 
+
+# int(webcam.get(cv2.CAP_PROP_FPS)
     # Parameters for saving
     # ---------------------
     # loop : int

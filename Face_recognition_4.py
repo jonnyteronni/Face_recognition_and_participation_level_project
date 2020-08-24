@@ -6,6 +6,7 @@ import platform
 import sys
 # import os
 import time
+from Plot_graphs import plot_graphs
 
 # Check the running OS to import mss
 
@@ -123,6 +124,14 @@ out = cv2.VideoWriter('output.mp4',fourcc, fps, (frame_width,frame_height))
 # Time counts for facetime
 time_count={}
 initial_total = time.time()
+none_counter=0
+
+#Timeseries
+timeseries=[]
+
+#Frame count
+frame_count=0
+
 
 # Initialize some variables
 face_locations = []
@@ -151,7 +160,8 @@ while True:
         # webcam = cv2.cvtColor(webcam, cv2.COLOR_RGB2BGR)
         # webcam = cv2.resize(webcam,dsize)
         frame = np.delete(webcam, np.s_[-1], 2)
-
+        
+    frame_count+=1
     # Frame from RGB to Gray
     # frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)    
 
@@ -191,7 +201,7 @@ while True:
         best_match_index = np.argmin(face_distances)
         if matches[best_match_index]:
             name = known_names[best_match_index]
-
+            none_counter=0
         # else:
             
         #     # To count facetime for no people
@@ -237,15 +247,20 @@ while True:
     # Print FPS
     print(1/(time.time() - initial_frame))
     
-    # Facetime measures to time dictionary
-    if str(name) in time_count.keys():
-        time_count[name]=time_count[name]+(time.time() - initial_frame)
+        # Facetime measures to time dictionary
+    none_counter_limit=3 # Change here the number of frames we want to facetime for the breakt time
+    if (none_counter>=none_counter_limit):
+        # time_ite=time_count["break_time"]+(time.time() - initial_frame)
+        # time_count["break_time"]=time_ite
+        # timeseries  
+        timeseries.append(["break_time",1])
     else:
-        time_count[name]=(time.time() - initial_frame)
-        
-
-
-        
+        # time_ite=(time.time() - initial_frame)
+        # time_count[name]=time_ite
+         # timeseries      
+        timeseries.append([name,1])
+    
+    none_counter+=1
         
 ##Split none time % to users
 time_count_copy=time_count.copy() # To delete after trials
@@ -263,8 +278,6 @@ if 'none' in time_count.keys():
 
 # Print facetime stats
 print("Total", (time.time() - initial_total))
-print("Time loss",(time.time() - initial_total)-sum(time_count.values()))
-print(time_count)
 
 
 # Release handle to the webcam
@@ -272,3 +285,56 @@ if type_of_input == 'w':
     webcam.release()
 out.release()
 cv2.destroyAllWindows()
+
+
+
+
+#Length of video, total of frames and length of each frame
+
+if (type_of_input == 'w') | (type_of_input == 'v'):
+    length_video=webcam.get(cv2.CAP_PROP_POS_MSEC)/1000 #seconds
+    # total_frames=webcam.get(cv2.CAP_PROP_FRAME_COUNT)
+    total_frames=frame_count
+    length_each_frame=length_video/total_frames
+elif (type_of_input=='sp') | (type_of_input=='fs'):
+    length_video=(time.time() - initial_total)
+    total_frames=frame_count
+    length_each_frame=length_video/total_frames
+
+
+
+
+#Creating timeseries dataframe and cum sum
+import pandas as pd
+timeseries_df=pd.DataFrame(timeseries)
+timeseries_df[1]=pd.DataFrame(timeseries)[1]*length_each_frame
+for i in timeseries_df[0].unique():
+    timeseries_df[i]=timeseries_df[timeseries_df[0]==i][1]
+    timeseries_df[i].fillna(0,inplace=True)
+    timeseries_df[i]=timeseries_df[i].cumsum()
+    time_count[i]= timeseries_df[i].max()
+
+#timeseries_df.drop([1],axis=1,inplace=True)
+        
+
+##Split none time % to users
+#time_count_copy=time_count.copy() # To delete after trials
+time_count_no_none=time_count.copy()
+time_count_no_none.pop("none", None)
+time_count_no_none.pop("break_time", None)
+split_percentages={}
+if 'none' in time_count.keys():
+    for key in time_count.keys():
+        if 'break_time' in time_count.keys():
+            percentage = time_count[key]/(sum(time_count.values())-time_count["none"]-time_count["break_time"])
+        else:
+            percentage = time_count[key]/(sum(time_count.values())-time_count["none"])
+        split_percentages[key]=percentage        
+    for key,perc in zip(time_count_no_none.keys(),split_percentages):
+        time_count[key] += time_count['none'] * split_percentages[key]
+    del(time_count['none'])
+
+
+plot_graphs(timeseries_df)
+
+

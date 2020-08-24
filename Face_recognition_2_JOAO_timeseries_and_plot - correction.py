@@ -202,13 +202,7 @@ while True:
     
     # Facetime measures to time dictionary
     none_counter_limit=3 # Change here the number of frames we want to facetime for the breakt time
-    if (str(name) in time_count.keys()) & (none_counter<none_counter_limit): 
-        # time_ite=time_count[name]+(time.time() - initial_frame)
-        # time_count[name]=time_ite
-        # timeseries
-        # timeseries.append([name,(time.time() - initial_frame)])
-        timeseries.append([name,1])
-    elif (none_counter>=none_counter_limit):
+    if (none_counter>=none_counter_limit):
         # time_ite=time_count["break_time"]+(time.time() - initial_frame)
         # time_count["break_time"]=time_ite
         # timeseries  

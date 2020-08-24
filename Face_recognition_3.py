@@ -1,17 +1,26 @@
 import face_recognition
 import cv2
 import numpy as np
-from mss import mss
+import platform
+# from mss import mss
 import sys
-import os
+# import os
 import time
 
+# Check the running OS to import mss
+
+if platform.system() == 'Linux':
+    print('Yeiii Linux is running here!')
+    from mss.linux import MSS as mss
+else:
+    print('Recommend using linux to run this script.')
+    from mss import mss
 
 
 # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
 
 # -------DASHBOARD--------
-type_of_input = 'v'
+type_of_input = 'fs'
 
 # hog for cpu, cnn for GPU
 MODEL_LOCATION = 'hog'
@@ -32,12 +41,7 @@ RESIZE_FRAME = 3
 
 # -------------
 
-# Check what is the OS running
 
-if os.name == 'Linux':
-    print('Yeiii Linux is running here!')
-else:
-    print('Recommend using linux to run this script.')
 
 sct=mss()    
 
@@ -51,7 +55,7 @@ if type_of_input == 'w':
     
 elif type_of_input == 'sp':
     # with screen_part
-    monitor = {"top": 300, "left": 0, "width": 1000, "height": 800}
+    monitor = {"top": 200, "left": 0, "width": 1000, "height": 500}
 elif type_of_input == 'fs':
     # with fullscreen
     monitor = sct.monitors[2]
@@ -77,40 +81,60 @@ for name in name_array:
     known_names.append(str(name,encoding='ascii'))
 
 
-# Initialize some variables
-face_locations = []
-face_encodings = []
-face_names = []
-process_this_frame = True
+
+
+# define variables for output video
+
+if type_of_input == 'w' or type_of_input=='v':
+    # frame size of webcam or video
+    frame_width = int(webcam.get(3))
+    frame_height = int(webcam.get(4))
+     
+    fps = int(webcam.get(cv2.CAP_PROP_FPS))
+    
+    # Codec
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    
+    
+    # Frame resizing to integer
+    RESIZE_FRAME = int(RESIZE_FRAME)
+    RESIZE_FRAME_PERC = 1/RESIZE_FRAME
+
+
+elif type_of_input=='sp' or type_of_input=='fs':
+    # frame size of webcam or video
+    frame_width = monitor['width']
+    frame_height = monitor['height']
+    
+    
+    fps = 29
+    
+    # Codec
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    
+    
+    # Frame resizing to integer
+    RESIZE_FRAME = int(RESIZE_FRAME)
+    RESIZE_FRAME_PERC = 1/RESIZE_FRAME
+
+
+# Output video
+out = cv2.VideoWriter('output.mp4',fourcc, fps, (frame_width,frame_height))
+
 
 # Time counts for facetime
 time_count={}
 initial_total = time.time()
 
-
-# Output to save video file on exit
-frame_width = int(webcam.get(3))
-frame_height = int(webcam.get(4))
-
-
-fps = int(webcam.get(cv2.CAP_PROP_FPS))
-
-# Codec
-# fourcc = cv2.VideoWriter_fourcc(*'X264')
-# fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-# fourcc = cv2.VideoWriter_fourcc(*'H264')
-# cv2.VideoWriter_fourcc(*'XVID')
-# cv2.VideoWriter_fourcc(c1, c2, c3, c4)
-fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
-
-out = cv2.VideoWriter('output.mp4',fourcc, fps, (frame_width,frame_height))
-
-# Frame resizing to integer
-RESIZE_FRAME = int(RESIZE_FRAME)
-RESIZE_FRAME_PERC = 1/RESIZE_FRAME
+# Initialize some variables
+face_locations = []
+face_encodings = []
+face_names = []
+# process_this_frame = True
 
 
-while webcam.isOpened():
+# while webcam.isOpened():
+while True:
     # Grab a single frame of video
     # ret, frame = video_capture.read()
     

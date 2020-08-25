@@ -1,4 +1,4 @@
-CREATE TABLE timeseries (
+CREATE TABLE project9.timeseries (
 `name` varchar(50)NOT NULL,
 `time` float,
 `record_source` varchar(50)NOT NULL,

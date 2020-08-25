@@ -6,6 +6,19 @@ from Plot_graphs import plot_bars
 
 cnx = mysql.connector.connect(user = 'root', password = 'tasmania',host ='localhost',
                               database = 'project9')
+
+# #TO DELETE EXISTING ENTRIES IN THE DATABASE
+# try:
+#     cnx.is_connected()
+#     print("Connection open")
+#     cursor = cnx.cursor()
+#     delete = ("DELETE FROM timeseries;")
+#     cursor.execute(delete)
+#     cnx.commit()
+    
+# except print("Connection is not successfully open"):
+#     pass
+
 try:
     cnx.is_connected()
     print("Connection open")

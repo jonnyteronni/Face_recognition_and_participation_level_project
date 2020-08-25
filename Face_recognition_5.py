@@ -39,7 +39,7 @@ NUM_JITTERS_ENCODING = 1
 TOLERANCE_RECOGNITION = 0.6
 
 # Frame resizing (integers 1 to X)
-RESIZE_FRAME = 2
+RESIZE_FRAME = 1
 
 
 # -------------

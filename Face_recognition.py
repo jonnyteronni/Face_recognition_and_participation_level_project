@@ -11,6 +11,8 @@ from sqlalchemy import create_engine
 
 # Check the running OS to import mss
 
+
+
 if platform.system() == 'Linux':
     print('Yeiii Linux is running here!')
     from mss.linux import MSS as mss
@@ -76,7 +78,7 @@ elif type_of_input =='v':
 # Get image information
 known_faces = []
 known_names= []
-
+# FILE_NAME = "input.mp4"
 face_array = np.genfromtxt('../models/known_faces_model.csv',delimiter=',')
 name_array = np.genfromtxt('../models/known_names_model.csv',delimiter=',',dtype='object')
 
@@ -107,7 +109,7 @@ frame_count=0
 
 # Initialize some variables
 face_locations = []
-face_encodings = []
+face_encodings = []# FILE_NAME = "input.mp4"
 face_names = []
 # process_this_frame = True
 

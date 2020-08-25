@@ -11,7 +11,7 @@ import glob
 def plot_bars(timeseries_df,length_each_frame):
     timeseries_df2=timeseries_df.copy()
     timeseries_df2.pop("name")
-    timeseries_df2.pop("time")
+    time_cumsum=timeseries_df2.pop("time").cumsum()
     timeseries_df2.pop("record_source")
     timeseries_df2.pop("date")
     
@@ -58,6 +58,7 @@ def plot_bars(timeseries_df,length_each_frame):
         plt.yticks(y_pos,order)
         plt.xlim(xmax=int(1.10*max(timeseries_df2.max().values)))
         plt.xlabel(label)
+        # plt.annotate(str(round(time_cumsum[[i][0][0]],1)),+"/"+str(round(time_cumsum,1).max()), (0.5,0.5),color="b",backgroundcolor="w",size=12)
         
         x_speak=[]
         ims+=1

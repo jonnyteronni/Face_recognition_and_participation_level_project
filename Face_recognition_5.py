@@ -4,7 +4,7 @@ import numpy as np
 import platform
 # from mss import mss
 import sys
-# import os
+import os
 import time
 from Plot_graphs import plot_graphs
 
@@ -21,7 +21,7 @@ else:
 # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
 
 # -------DASHBOARD--------
-type_of_input = 'fs'
+type_of_input = 'w'
 
 # hog for cpu, cnn for GPU
 MODEL_LOCATION = 'hog'
@@ -37,7 +37,7 @@ NUM_JITTERS_ENCODING = 1
 TOLERANCE_RECOGNITION = 0.6
 
 # Frame resizing (integers 1 to X)
-RESIZE_FRAME = 2
+RESIZE_FRAME = 1
 
 
 # -------------
@@ -61,7 +61,7 @@ elif type_of_input == 'fs':
 elif type_of_input =='v':
     # with video
     # webcam = cv2.VideoCapture('face_recognition/Zoom Meeting 2020-08-18 18-38-49.mp4')
-    webcam = cv2.VideoCapture('Speaker.mp4')
+    webcam = cv2.VideoCapture('gallery.mp4')
 
 
 
@@ -280,16 +280,9 @@ if type_of_input == 'w' or type_of_input=='v':
     frame_height = int(webcam.get(4))
      
     fps = int(webcam.get(cv2.CAP_PROP_FPS))
+ 
+   
     
-    # Codec
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    
-    
-    # Frame resizing to integer
-    RESIZE_FRAME = int(RESIZE_FRAME)
-    RESIZE_FRAME_PERC = 1/RESIZE_FRAME
-
-
 elif type_of_input=='sp' or type_of_input=='fs':
     # frame size of webcam or video
     frame_width = monitor['width']
@@ -298,56 +291,53 @@ elif type_of_input=='sp' or type_of_input=='fs':
     
     fps = 1/length_each_frame
     
-    # Codec
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     
-    
-    # Frame resizing to integer
-    RESIZE_FRAME = int(RESIZE_FRAME)
-    RESIZE_FRAME_PERC = 1/RESIZE_FRAME
+
+# Codec
+fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
 
 
 # Output file
-out = cv2.VideoWriter('output.mp4',fourcc, fps , (frame_width,frame_height))
+out = cv2.VideoWriter('output_temp.mp4',fourcc, fps , (frame_width,frame_height))
 for frame in frame_list:
     out.write(frame)
 
 out.release()
+os.system("ffmpeg -i output_temp.mp4 -vcodec libx264 output.mp4 -y")
 
 
 
+# #Creating timeseries dataframe and cum sum
+# import pandas as pd
+# timeseries_df=pd.DataFrame(timeseries)
+# timeseries_df[1]=pd.DataFrame(timeseries)[1]*length_each_frame
+# for i in timeseries_df[0].unique():
+#     timeseries_df[i]=timeseries_df[timeseries_df[0]==i][1]
+#     timeseries_df[i].fillna(0,inplace=True)
+#     timeseries_df[i]=timeseries_df[i].cumsum()
+#     time_count[i]= timeseries_df[i].max()
 
-#Creating timeseries dataframe and cum sum
-import pandas as pd
-timeseries_df=pd.DataFrame(timeseries)
-timeseries_df[1]=pd.DataFrame(timeseries)[1]*length_each_frame
-for i in timeseries_df[0].unique():
-    timeseries_df[i]=timeseries_df[timeseries_df[0]==i][1]
-    timeseries_df[i].fillna(0,inplace=True)
-    timeseries_df[i]=timeseries_df[i].cumsum()
-    time_count[i]= timeseries_df[i].max()
-
-#timeseries_df.drop([1],axis=1,inplace=True)
+# #timeseries_df.drop([1],axis=1,inplace=True)
         
 
-##Split none time % to users
-#time_count_copy=time_count.copy() # To delete after trials
-time_count_no_none=time_count.copy()
-time_count_no_none.pop("none", None)
-time_count_no_none.pop("break_time", None)
-split_percentages={}
-if 'none' in time_count.keys():
-    for key in time_count.keys():
-        if 'break_time' in time_count.keys():
-            percentage = time_count[key]/(sum(time_count.values())-time_count["none"]-time_count["break_time"])
-        else:
-            percentage = time_count[key]/(sum(time_count.values())-time_count["none"])
-        split_percentages[key]=percentage        
-    for key,perc in zip(time_count_no_none.keys(),split_percentages):
-        time_count[key] += time_count['none'] * split_percentages[key]
-    del(time_count['none'])
+# ##Split none time % to users
+# #time_count_copy=time_count.copy() # To delete after trials
+# time_count_no_none=time_count.copy()
+# time_count_no_none.pop("none", None)
+# time_count_no_none.pop("break_time", None)
+# split_percentages={}
+# if 'none' in time_count.keys():
+#     for key in time_count.keys():
+#         if 'break_time' in time_count.keys():
+#             percentage = time_count[key]/(sum(time_count.values())-time_count["none"]-time_count["break_time"])
+#         else:
+#             percentage = time_count[key]/(sum(time_count.values())-time_count["none"])
+#         split_percentages[key]=percentage        
+#     for key,perc in zip(time_count_no_none.keys(),split_percentages):
+#         time_count[key] += time_count['none'] * split_percentages[key]
+#     del(time_count['none'])
 
 
-plot_graphs(timeseries_df)
+# plot_graphs(timeseries_df)
 
 

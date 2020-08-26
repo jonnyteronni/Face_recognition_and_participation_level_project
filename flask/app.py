@@ -6,20 +6,19 @@ from Face_recognition import face_recon
 from from_sql_processing import stats
 import pandas as pd
 import cv2
-# from flask.ext.cache import Cache
-
+from flask_caching import Cache
 
 app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
-# # Cache solution
-# cache = Cache(app,config={'CACHE_TYPE': 'null'})
+# Cache solution
+cache = Cache(app,config={'CACHE_TYPE': 'null'})
 
-# # app.config["CACHE_TYPE"] = "null"
+# app.config["CACHE_TYPE"] = "null"
 
-# cache.init_app(app)
+cache.init_app(app)
 
 
 

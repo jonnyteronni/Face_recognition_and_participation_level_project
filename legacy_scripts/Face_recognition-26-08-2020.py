@@ -2,7 +2,7 @@ import face_recognition
 import cv2
 import numpy as np
 import platform
-from mss import mss
+# from mss import mss
 import sys
 import os
 import time
@@ -72,9 +72,8 @@ def face_recon(FILE_NAME,pwd_SQL):
         # with video
         webcam = cv2.VideoCapture(video_input)
     
-    
-    
-    
+
+
     # Get image information
     known_faces = []
     known_names= []
@@ -240,7 +239,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     
     
     # Release handle to the webcam
-    if type_of_input == 'w':
+    if (type_of_input == 'w'): #################
         webcam.release()
     
     # cv2.destroyAllWindows()
@@ -251,13 +250,23 @@ def face_recon(FILE_NAME,pwd_SQL):
     
     
     if (type_of_input == 'w') | (type_of_input == 'v'):
+<<<<<<< HEAD:Face_recognition.py
         fps_temp = webcam.get(cv2.CAP_PROP_FPS)
+=======
+        length_video=webcam.get(cv2.CAP_PROP_POS_MSEC)/1000 #seconds
+        print(webcam.get(cv2.CAP_PROP_POS_MSEC)/1000)
+        print(webcam.get(cv2.CAP_PROP_FRAME_COUNT))
+>>>>>>> 57c2a3855d2f96dc187ddbfa4065fe20a94ad393:legacy_scripts/Face_recognition-26-08-2020.py
         total_frames=frame_count
         
         length_video=total_frames/fps_temp
         
         length_each_frame=length_video/total_frames
+<<<<<<< HEAD:Face_recognition.py
         
+=======
+
+>>>>>>> 57c2a3855d2f96dc187ddbfa4065fe20a94ad393:legacy_scripts/Face_recognition-26-08-2020.py
     elif (type_of_input=='sp') | (type_of_input=='fs'):
         length_video=(time.time() - initial_total)
         total_frames=frame_count

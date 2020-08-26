@@ -1,8 +1,9 @@
 import os, sys
-from flask import Flask, render_template, redirect,  request, Response, stream_with_context, send_from_directory
-
+from flask import Flask, render_template, redirect,  request, Response, stream_with_context, send_from_directory, url_for, session
 sys.path.append(os.path.abspath("../"))
 from Encode_images_for_face_recognition_byfilename import encode_images
+from Face_recognition import face_recon
+from from_sql_processing import stats
 import pandas as pd
 import cv2
 
@@ -11,6 +12,9 @@ import cv2
 app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+
+app.secret_key = "secret key"
 
 @app.route("/")
 def index():
@@ -27,8 +31,11 @@ def upload_video():
                 os.mkdir(target)
         
             for file in request.files.getlist("video"):
+
                 FILE_NAME = file.filename
-                # FILE_NAME = "input.mp4"
+                             
+                session['FILE_NAME'] = str(FILE_NAME)
+
                 destination = "/".join([target, FILE_NAME])
                 file.save(destination)
             
@@ -56,16 +63,32 @@ def upload_video():
 
 @app.route("/face_recognition",methods=['POST','GET'])
 def face_models():
+
     if request.method == 'POST':
         
         if 'run_model' in request.form:
             # Model to encode images
             encode_images()
             print('Images encoded')
-
+            
+            
+            # SQL Password
+            pwd_SQL = "tKaNblvrQipO1!"
+            # pwd_SQL = 'tasmania'
+            
             # Face recognition script
-            exec(open("../Face_recognition.py").read())
+            file_name = session.get('FILE_NAME',pwd_SQL)
+            face_recon(file_name,pwd_SQL)
             print('Face recognition done')
+            
+            
+            # Import to SQL
+            
+            
+            
+            
+            stats(pwd_SQL)
+            
             
             return render_template("home/face_recognition.html")
         
@@ -166,4 +189,4 @@ def tables():
 # bootstrap = Bootstrap(app)
 
 if __name__ == "__main__":
-    app.run(port=4555, debug=False)
+    app.run(port=4555, debug=True)

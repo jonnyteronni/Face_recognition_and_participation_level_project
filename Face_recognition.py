@@ -12,7 +12,7 @@ from sqlalchemy import create_engine
 # Check the running OS to import mss
 
 
-def face_recon(FILE_NAME):
+def face_recon(FILE_NAME,pwd_SQL):
     if platform.system() == 'Linux':
         print('Yeiii Linux is running here!')
         from mss.linux import MSS as mss
@@ -24,13 +24,13 @@ def face_recon(FILE_NAME):
     # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
     
     # -------DASHBOARD--------
-    type_of_input = 'fs'
+    type_of_input = 'v'
     
-    video_input='./flask/static/video/'+str(FILE_NAME)
-    
-    # SQL Password
+    video_input= 'static/video/'+str(FILE_NAME)
+
+    # # SQL Password
     # pwd = "tKaNblvrQipO1!"
-    pwd = 'tasmania'
+    # # pwd = 'tasmania'
     
     
     # hog for cpu, cnn for GPU
@@ -47,7 +47,7 @@ def face_recon(FILE_NAME):
     TOLERANCE_RECOGNITION = 0.6
     
     # Frame resizing (integers 1 to X)
-    RESIZE_FRAME = 4
+    RESIZE_FRAME = 3
     
     
     # -------------
@@ -79,7 +79,7 @@ def face_recon(FILE_NAME):
     known_faces = []
     known_names= []
     # FILE_NAME = "input.mp4"
-    #####################################################################################
+    
     face_array = np.genfromtxt('../models/known_faces_model.csv',delimiter=',') 
     name_array = np.genfromtxt('../models/known_names_model.csv',delimiter=',',dtype='object')
     
@@ -209,7 +209,7 @@ def face_recon(FILE_NAME):
         
         # Display the resulting image
         # if type_of_input != 'v':
-        cv2.imshow('Smile you are on camera!!!', frame) ######################################################################################################
+        # cv2.imshow('Smile you are on camera!!!', frame) 
         
         
         
@@ -279,8 +279,9 @@ def face_recon(FILE_NAME):
         
         fps = 1/length_each_frame
         
-        
-    
+    print(length_each_frame)
+    print(total_frames)
+    print(length_video)
     # Codec
     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
     
@@ -309,14 +310,13 @@ def face_recon(FILE_NAME):
     # create sqlalchemy engine
     engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}"
                            .format(user="root",
-                                   pw=pwd,
+                                   pw=pwd_SQL,
                                    db="project9"))
     
     timeseries_sql.to_sql('timeseries', con = engine, if_exists = "append",index=False)
     
     print("Exported to SQL")
     
-    return
-
+    
 
 

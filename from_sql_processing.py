@@ -1,13 +1,13 @@
 
-
+import os, sys
 import mysql.connector
 import pandas as pd
 sys.path.append(os.path.abspath("../"))
 from Plot_graphs import plot_bars
 
 
-def stats():
-    cnx = mysql.connector.connect(user = 'root', password = 'tasmania',host ='localhost',
+def stats(pwd_SQL):
+    cnx = mysql.connector.connect(user = 'root', password = pwd_SQL,host ='localhost',
                                   database = 'project9')
     
     # #TO DELETE EXISTING ENTRIES IN THE DATABASE

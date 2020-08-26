@@ -69,18 +69,18 @@ def plot_bars(timeseries_df,length_each_frame):
         imss.append(ims)
         
     #Saving the frames
-        plt.savefig('./static/gif/all/'+str(ims)+'.png',dpi=150)
+        plt.savefig('static/gif/all/'+str(ims)+'.png',dpi=150)
         # plt.show()
 
         
     
     #Creating Gif
-    folder = './static/gif/all' 
+    folder = 'static/gif/all' 
     files = [f"{folder}\\{file}.png" for file in (imss)]
     
     
     images = [imageio.imread(file) for file in files]
-    imageio.mimwrite('./static/gif/facetime_bar.gif', images, fps=1/length_each_frame)
+    imageio.mimwrite('static/gif/facetime_bar.gif', images, fps=1/length_each_frame)
     
     print("GIF saved")
     

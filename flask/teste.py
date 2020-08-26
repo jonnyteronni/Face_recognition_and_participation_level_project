@@ -10,5 +10,5 @@ sys.path.append(os.path.abspath("../"))
 from Face_recognition import face_recon
 from Plot_graphs import plot_bars
 
-face_recon('small.mp4',"tKaNblvrQipO1!")
+face_recon('small.mp4',"tasmania")
 # plot_bars()

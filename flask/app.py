@@ -166,4 +166,4 @@ def tables():
 # bootstrap = Bootstrap(app)
 
 if __name__ == "__main__":
-    app.run(port=4555, debug=True)
+    app.run(port=4555, debug=False)

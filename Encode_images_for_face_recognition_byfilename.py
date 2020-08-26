@@ -8,7 +8,7 @@ import cv2
 
 def encode_images():
     
-    KNOWN_FACES_DIR = 'static/images'
+    KNOWN_FACES_DIR = 'static/images'###################################
     known_faces = []
     known_names= []
     
@@ -38,7 +38,7 @@ def encode_images():
        
         
             
-    
+    #############################################################################
     np.savetxt('../models/known_faces_model.csv',known_faces,delimiter=',',fmt='%f')
     
     np.savetxt('../models/known_names_model.csv',known_names,delimiter=',',fmt='%s')

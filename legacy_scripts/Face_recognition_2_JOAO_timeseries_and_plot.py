@@ -24,7 +24,7 @@ import time
 # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
 
 # -------DASHBOARD--------
-type_of_input = 'fs'
+type_of_input = 'w'
 
 # hog for cpu, cnn for GPU
 MODEL_LOCATION = 'hog'

@@ -2,7 +2,7 @@ import face_recognition
 import cv2
 import numpy as np
 import platform
-from mss import mss
+# from mss import mss
 import sys
 import os
 import time
@@ -72,9 +72,8 @@ def face_recon(FILE_NAME,pwd_SQL):
         # with video
         webcam = cv2.VideoCapture(video_input)
     
-    
-    
-    
+
+
     # Get image information
     known_faces = []
     known_names= []
@@ -240,19 +239,21 @@ def face_recon(FILE_NAME,pwd_SQL):
     
     
     # Release handle to the webcam
-    if type_of_input == 'w':
+    if (type_of_input == 'w'): #################
         webcam.release()
     
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
     
     
     #Length of video, total of frames and length of each frame
     
     if (type_of_input == 'w') | (type_of_input == 'v'):
         length_video=webcam.get(cv2.CAP_PROP_POS_MSEC)/1000 #seconds
-        # total_frames=webcam.get(cv2.CAP_PROP_FRAME_COUNT)
+        print(webcam.get(cv2.CAP_PROP_POS_MSEC)/1000)
+        print(webcam.get(cv2.CAP_PROP_FRAME_COUNT))
         total_frames=frame_count
         length_each_frame=length_video/total_frames
+
     elif (type_of_input=='sp') | (type_of_input=='fs'):
         length_video=(time.time() - initial_total)
         total_frames=frame_count

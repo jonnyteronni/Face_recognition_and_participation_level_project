@@ -9,4 +9,4 @@ import os, sys
 sys.path.append(os.path.abspath("../"))
 from Face_recognition import face_recon
 
-face_recon('small.mp4',"tKaNblvrQipO1!")
+face_recon('small.mp4',"tasmania")

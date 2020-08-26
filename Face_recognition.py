@@ -243,16 +243,21 @@ def face_recon(FILE_NAME,pwd_SQL):
     if type_of_input == 'w':
         webcam.release()
     
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
     
     
     #Length of video, total of frames and length of each frame
     
+    
+    
     if (type_of_input == 'w') | (type_of_input == 'v'):
-        length_video=webcam.get(cv2.CAP_PROP_POS_MSEC)/1000 #seconds
-        # total_frames=webcam.get(cv2.CAP_PROP_FRAME_COUNT)
+        fps_temp = webcam.get(cv2.CAP_PROP_FPS)
         total_frames=frame_count
+        
+        length_video=total_frames/fps_temp
+        
         length_each_frame=length_video/total_frames
+        
     elif (type_of_input=='sp') | (type_of_input=='fs'):
         length_video=(time.time() - initial_total)
         total_frames=frame_count
@@ -279,9 +284,6 @@ def face_recon(FILE_NAME,pwd_SQL):
         
         fps = 1/length_each_frame
         
-    print(length_each_frame)
-    print(total_frames)
-    print(length_video)
     # Codec
     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
     

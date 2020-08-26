@@ -77,7 +77,7 @@ def face_models():
             # pwd_SQL = 'tasmania'
             
             # Face recognition script
-            file_name = session.get('FILE_NAME',pwd_SQL)
+            file_name = session.get('FILE_NAME')
             face_recon(file_name,pwd_SQL)
             print('Face recognition done')
             
@@ -85,12 +85,24 @@ def face_models():
             # Import to SQL
             
             
+             #SUGESTION FOR FRONTEND:
+                # input.mp4 | 92.8 | 2020-08-25
+                # 6
             
-            
+            # df = pd.DataFrame()
             stats(pwd_SQL)
+            # total_video_length, upload_date,unique_speakers_identified,video_name, df = stats(pwd_SQL)
             
+            total_video_length = 92
+            upload_date = '2020-08-25'
+            unique_speakers_identified = 6
+            video_name = 'video.mp4'
             
-            return render_template("home/face_recognition.html")
+            return render_template("home/face_recognition.html", \
+                                   total_video_length = total_video_length,\
+                                   upload_date = upload_date,\
+                                   unique_speakers_identified = unique_speakers_identified,\
+                                   video_name = video_name)  
         
         
         elif 'show_video' in request.form:
@@ -102,7 +114,11 @@ def face_models():
                         'algebra': [78, 88, 82, 87]})
             
             facetime_bar_gif='/static/gif/facetime_bar.gif'
-            return render_template("home/face_recognition.html", videos = video,tables=[df.to_html(classes='table table-hover')], titles=df.columns.values, facetime_bar_gif = facetime_bar_gif)    
+            return render_template("home/face_recognition.html", \
+                                   videos = video,tables=[df.to_html(classes='table table-hover')],\
+                                   titles=df.columns.values,\
+                                   facetime_bar_gif = facetime_bar_gif)
+                                     
         
     else:
     

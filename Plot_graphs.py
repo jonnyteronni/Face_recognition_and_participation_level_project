@@ -76,7 +76,7 @@ def plot_bars(timeseries_df,length_each_frame):
     
     #Creating Gif
     folder = 'static/gif/all' 
-    files = [f"{folder}\\{file}.png" for file in (imss)]
+    files = [f"{folder}/{file}.png" for file in (imss)]
     
     
     images = [imageio.imread(file) for file in files]

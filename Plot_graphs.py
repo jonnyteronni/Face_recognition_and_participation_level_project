@@ -85,7 +85,7 @@ def plot_bars(timeseries_df,length_each_frame,):
     
     
     images = [imageio.imread(file) for file in files]
-    imageio.mimwrite('static/gif/facetime_bar.gif', images, fps=1/length_each_frame,duration=1)
+    imageio.mimwrite('static/gif/facetime_bar.gif', images, fps=1/length_each_frame)
     
     print("GIF saved")
     

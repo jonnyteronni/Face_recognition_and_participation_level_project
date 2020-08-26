@@ -6,6 +6,7 @@ import numpy as np
 import imageio
 import os
 import glob
+import math
 
 
 def plot_bars(timeseries_df,length_each_frame):
@@ -14,6 +15,7 @@ def plot_bars(timeseries_df,length_each_frame):
     time_cumsum=timeseries_df2.pop("time").cumsum()
     timeseries_df2.pop("record_source")
     timeseries_df2.pop("date")
+    timeseries_df2.pop("frame_id")
     
     # if max(timeseries_df2.max()) > 120:
     #     timeseries_df2=timeseries_df2[timeseries_df2.columns]/60
@@ -30,7 +32,7 @@ def plot_bars(timeseries_df,length_each_frame):
     except KeyError :
         pass
         
-    files = glob.glob('./gif/all/*')
+    files = glob.glob('../gif/all/*')
     for f in files:
         os.remove(f)
     
@@ -56,7 +58,7 @@ def plot_bars(timeseries_df,length_each_frame):
         plt.figure(figsize=(15,3))
         plt.barh(y_pos, x_speak, align='center',color=color)
         plt.yticks(y_pos,order)
-        plt.xlim(xmax=int(1.10*max(timeseries_df2.max().values)))
+        plt.xlim(xmax=math.ceil(1.05*max(timeseries_df2.max().values)))
         plt.xlabel(label)
         # plt.annotate(str(round(time_cumsum[[i][0][0]],1)),+"/"+str(round(time_cumsum,1).max()), (0.5,0.5),color="b",backgroundcolor="w",size=12)
         # print(str(round(time_cumsum[[i][0][0]],1))+"/"+str(round(time_cumsum,1).max()))
@@ -67,19 +69,20 @@ def plot_bars(timeseries_df,length_each_frame):
         imss.append(ims)
         
     #Saving the frames
-        plt.savefig('./gif/all/'+str(ims)+'.png',dpi=150)
-        plt.show()
+        plt.savefig('./static/gif/all/'+str(ims)+'.png',dpi=150)
+        # plt.show()
+
         
     
     #Creating Gif
-    folder = './gif/all' 
+    folder = './static/gif/all' 
     files = [f"{folder}\\{file}.png" for file in (imss)]
     
     
     images = [imageio.imread(file) for file in files]
-    imageio.mimwrite('./gif/movie.gif', images, fps=1/length_each_frame)
+    imageio.mimwrite('./static/gif/facetime_bar.gif', images, fps=1/length_each_frame)
     
-    print("Gif saved")
+    print("GIF saved")
     
     
     

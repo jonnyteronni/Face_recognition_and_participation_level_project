@@ -1,0 +1,71 @@
+{% extends "base-site.html" %}
+
+{% block title %} UI Typography {% endblock %}
+
+{% block content %}
+
+    <div class="card">
+        <div class="card-header card-header-primary">
+          <h2 class="card-title">Face recognition</h2>
+
+        </div>
+        <div class="card-body">
+          <div id="typography">
+
+                <form  id="upload-form3" action="{{ url_for('face_models') }}" method="POST" enctype="multipart/form-data">
+                    <div id="msg">&nbsp</div>
+                    <strong>Models:</strong><br>
+                    <input name = "run_model" type="submit" value="Run model" id="run_model_button">
+                </form>
+
+                <form  id="upload-form4" action="{{ url_for('face_models') }}" method="POST" enctype="multipart/form-data">
+                    <input name = "show_video" type="submit" value="Show video" id="show_video_button">
+                </form>
+
+        <div class="row">
+
+
+
+            <iframe  class="card-body" height=600 style="border:0;border:none"  src={{videos}}> </iframe>
+
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="card-body">
+                      <div class="table-responsive" style="text-align: right;">
+                        <table class="table">
+                          <thead class=" text-primary">
+
+                            {% for table in tables %}
+
+                            {{titles[loop.index]}}
+
+                          </thead>
+                          <tbody>
+                            {{ table|safe }}
+                            {%- endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+          </div>
+          <div class="col-md-12">
+            <iframe  style="margin:0; width:100%; border:none; overflow:hidden;" scrolling="no"  src={{facetime_bar_gif}}> </iframe>
+          </div>
+        </div>
+
+
+
+      </div>
+    </div>
+
+ {% include 'site_template/scripts.html' %}
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

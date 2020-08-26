@@ -1,0 +1,43 @@
+{% extends "base-site.html" %}
+
+{% block title %} UI Typography {% endblock %} 
+
+{% block content %}
+
+    <div class="card">
+        <div class="card-header card-header-primary">
+          <h2 class="card-title">Upload Data</h2>
+        </div>
+        <div class="card-body">
+          <div id="typography">
+            <div class="card-title">
+              <h3>Upload MP4 video</h3>
+            </div>
+            
+            <form  id="upload-form1" action="{{ url_for('upload_video') }}" method="POST" enctype="multipart/form-data">
+            <input id="file-picker-video" type="file" name="video" accept="*">
+            <div id="msg"></div>
+            <input name = "video_form" type="submit" value="Upload Video" id="upload_video_button">
+        </form>
+        <div id="msg">&nbsp</div>
+        <div class="card-title">
+              <h3>Upload people pictures</h3>
+            </div>
+        <form  id="upload-form2" action="{{ url_for('upload_video') }}" method="POST" enctype="multipart/form-data">
+            
+            <input id="file-picker-images" type="file" name="images" accept="*" multiple>
+            <div id="msg"></div>
+            <input name = "images_form" type="submit" value="Upload Images" id="upload_images_button">
+        </form>
+              
+        
+                        
+            </div>
+          </div>
+        </div>
+    </div>
+ {% include 'site_template/scripts.html' %}
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

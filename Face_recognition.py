@@ -9,6 +9,7 @@ import time
 import pandas as pd
 from sqlalchemy import create_engine
 import mysql.connector
+import imageio
 
 
 
@@ -36,7 +37,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     # video_input= 'static/video/small.mp4'  ###########################
     # # SQL Password
     # pwd_SQL = "tKaNblvrQipO1!"
-    #pwd_SQL = 'tasmania'
+    # pwd_SQL = 'tasmania'
     
     
     # hog for cpu, cnn for GPU
@@ -317,12 +318,23 @@ def face_recon(FILE_NAME,pwd_SQL):
     
     
     # Output file
-    out = cv2.VideoWriter('static/video/output_temp.mp4',fourcc, fps , (frame_width,frame_height))
-    for frame in frame_list:
-        out.write(frame)
+    # out = cv2.VideoWriter('static/video/output_temp.mp4',fourcc, fps , (frame_width,frame_height))
+    # for frame in frame_list:
+
+    #     out.write(frame)
     
-    out.release()
-    os.system("ffmpeg -i static/video/output_temp.mp4 -vcodec libx264 static/video/final.mp4 -y")
+    # out.release()
+    # os.system("ffmpeg -i static/video/output_temp.mp4 -vcodec libx264 static/video/final.mp4 -y")
+    
+  
+    frame_list2=[]
+    for frame in frame_list:
+        frame_list2.append(cv2.cvtColor(np.array(frame), cv2.COLOR_BGR2RGB))
+    
+    imageio.mimwrite('static/video/final.gif', frame_list2, fps=1/length_each_frame)
+    
+    print("Video_GIF saved")
+    
     
     
     

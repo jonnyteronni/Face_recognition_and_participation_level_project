@@ -29,6 +29,21 @@ app.secret_key = "secret key"
 def index():
     return render_template("home/welcome.html")
 
+
+@app.after_request
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
+
+
+
 @app.route("/ui-upload_data",methods=['POST','GET'])
 def upload_video():
     if request.method == 'POST':
@@ -108,6 +123,12 @@ def face_models():
         
         
         elif 'show_video' in request.form:
+            
+            with app.app_context():
+                cache.clear()
+            
+            
+            
             video = '/static/video/final.mp4'
             
             
@@ -128,6 +149,8 @@ def face_models():
             
             total_video_length, upload_date,unique_speakers_identified,video_name, df = stats(pwd_SQL)
            
+            
+            
             
             facetime_bar_gif='/static/gif/facetime_bar.gif'
             return render_template("home/face_recognition.html", \
@@ -157,7 +180,8 @@ def tables():
     return render_template("home/ui-tables.html",tables=[df.to_html(classes='table table-hover')], titles=df.columns.values)
 
 
-
+# <video  class="card-body" height=600 style="border:0;border:none"  src={{videos}}> </video>
+# <video height=600 src={{videos}} controls autoplay loop> </video>
    
 # @app.route("/upload", methods=['POST','GET'])
 # def upload_video():

@@ -29,7 +29,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     
     # -------DASHBOARD--------
 
-    type_of_input = 'fs'
+    type_of_input = 'v'
 
     
     video_input= 'static/video/'+str(FILE_NAME)

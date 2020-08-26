@@ -2,17 +2,21 @@ import face_recognition
 import cv2
 import numpy as np
 import platform
-# from mss import mss
+from mss import mss
 import sys
 import os
 import time
 import pandas as pd
 from sqlalchemy import create_engine
+import mysql.connector
 
-# Check the running OS to import mss
+
 
 
 def face_recon(FILE_NAME,pwd_SQL):
+    
+    # Check the running OS to import mss
+
     if platform.system() == 'Linux':
         print('Yeiii Linux is running here!')
         from mss.linux import MSS as mss
@@ -24,13 +28,15 @@ def face_recon(FILE_NAME,pwd_SQL):
     # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
     
     # -------DASHBOARD--------
+
     type_of_input = 'fs'
+
     
     video_input= 'static/video/'+str(FILE_NAME)
-
+    # video_input= 'static/video/small.mp4'  ###########################
     # # SQL Password
-    # pwd = "tKaNblvrQipO1!"
-    # # pwd = 'tasmania'
+    # pwd_SQL = "tKaNblvrQipO1!"
+    #pwd_SQL = 'tasmania'
     
     
     # hog for cpu, cnn for GPU
@@ -47,8 +53,9 @@ def face_recon(FILE_NAME,pwd_SQL):
     TOLERANCE_RECOGNITION = 0.6
     
     # Frame resizing (integers 1 to X)
-    RESIZE_FRAME = 2
-    
+
+    RESIZE_FRAME = 3
+
     
     # -------------
     
@@ -73,6 +80,8 @@ def face_recon(FILE_NAME,pwd_SQL):
         webcam = cv2.VideoCapture(video_input)
     
 
+    
+    
 
     # Get image information
     known_faces = []
@@ -95,7 +104,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     RESIZE_FRAME = int(RESIZE_FRAME)
     RESIZE_FRAME_PERC = 1/RESIZE_FRAME
     
-    # Time counts for facetimeq
+    # Time counts for facetime
     
     initial_total = time.time()
     none_counter=0
@@ -113,11 +122,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     face_names = []
     # process_this_frame = True
     
-    # Time counts for facetime
-    time_count={}
-    initial_total = time.time()
 
-    none_counter=0
     
     frame_list = []
     
@@ -183,30 +188,26 @@ def face_recon(FILE_NAME,pwd_SQL):
             if matches[best_match_index]:
                 name = known_names[best_match_index]
                 none_counter=0
-                
-                # print(face_names)
+
                 
 
     
             face_names.append(name)
-            # print(face_names)
-            # Print FPS
-            # print(1/(time.time() - initial_frame))
-            # print(name)
+            
+         
+       
                 # Facetime measures to time dictionary
-        # print(face_names)
+      
        
         none_counter_limit=3 # Change here the number of frames we want to facetime for the breakt time
         for i in face_names:
             if (none_counter<none_counter_limit) & (len(face_names)>0) :
                 timeseries.append([i,1/len(face_names)])
         
-
-        # none_counter+=1
-
-                    
-        # process_this_frame = not process_this_frame
     
+        # Print FPS
+        print(1/(time.time() - initial_frame))   
+
     
         # Display the results
         for (top, right, bottom, left), name in zip(face_locations, face_names):
@@ -230,34 +231,30 @@ def face_recon(FILE_NAME,pwd_SQL):
         frame_list.append(frame)
         
         # Display the resulting image
-        # if type_of_input != 'v':
-        cv2.imshow('Smile you are on camera!!!', frame) 
+        if type_of_input != 'v':
+          cv2.imshow('Smile you are on camera!!!', frame) 
+
         
         
         
         # Hit 'q' on the keyboard to quit!
         if cv2.waitKey(1) & 0xFF == ord('q'):
-        # if 0xFF == ord('q'):
+            # if 0xFF == ord('q'):
             cv2.destroyAllWindows()
             break
         
-        # Print FPS
-        # print(1/(time.time() - initial_frame))
-        # print(name)
-        #     # Facetime measures to time dictionary
-        none_counter_limit=3 # Change here the number of frames we want to facetime for the breakt time
+
+        #     # Facetime breaktime to time dictionary
+        # none_counter_limit=3 # Change here the number of frames we want to facetime for the breakt time
         if (none_counter>=none_counter_limit):
             timeseries.append(["break_time",1])
-
-        # else:
- 
-        #     timeseries.append([name,1])
         
         none_counter+=1
         
         
-    # print(time_count)
-    # print(timeseries)
+        # Print FPS
+        print(1/(time.time() - initial_frame))   
+
     
     
     
@@ -265,11 +262,13 @@ def face_recon(FILE_NAME,pwd_SQL):
     print("Total", (time.time() - initial_total))
     
     
+
     # Release handle to the webcam
     if (type_of_input == 'w'): #################
         webcam.release()
     
-    # cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
+
     
     
     #Length of video, total of frames and length of each frame
@@ -287,13 +286,12 @@ def face_recon(FILE_NAME,pwd_SQL):
         length_each_frame=length_video/total_frames
 
 
-
     elif (type_of_input=='sp') | (type_of_input=='fs'):
         length_video=(time.time() - initial_total)
         total_frames=frame_count
         length_each_frame=length_video/total_frames
     
-    
+
     
     # define variables for output video
     
@@ -330,6 +328,10 @@ def face_recon(FILE_NAME,pwd_SQL):
     
     
     #Creating timeseries to export to sql
+    
+
+        
+    
     timeseries_sql=pd.DataFrame(timeseries,columns=["name","time"])
     
     timeseries_sql["time"]=timeseries_sql["time"]*length_each_frame
@@ -337,7 +339,29 @@ def face_recon(FILE_NAME,pwd_SQL):
     source={"w":"webcam","sp":"screen_part","fs":"fullscreen", "v":str("video"+"_"+video_input)}
     timeseries_sql["record_source"]=source[type_of_input]
 
+    #Checking and create video_id (called frame id in SQL)
+    cnx = mysql.connector.connect(user = 'root', password = pwd_SQL,host ='localhost',
+                              database = 'project9')
+    try:
+        cnx.is_connected()
+        print("Connection open")
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM timeseries;")
+        cursor.execute(query)
+        results = cursor.fetchall()
     
+    except print("Connection is not successfully open"):
+        pass
+    
+    timeseries_df=pd.DataFrame(results,columns=["frame_id","name","time","record_source","date"])
+
+    if timeseries_df["frame_id"].max() > 0:
+        timeseries_sql["frame_id"]=(timeseries_df["frame_id"].max()+1)
+    else:
+        timeseries_sql["frame_id"]=1
+        
+        
+    timeseries_sql=timeseries_sql[['frame_id','name', 'time', 'record_source']]
     
     # create sqlalchemy engine
     engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}"
@@ -349,6 +373,8 @@ def face_recon(FILE_NAME,pwd_SQL):
     
     print("Exported to SQL")
     
-    
+
+    return timeseries
+
 
 

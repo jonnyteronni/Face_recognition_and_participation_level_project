@@ -19,6 +19,8 @@
                       <form  id="upload-form4" action="{{ url_for('face_models') }}" method="POST" enctype="multipart/form-data">
                           <input name = "show_video" type="submit" value="Show video" id="show_video_button">
                       </form>
+                      <h3 class="card-title" style="margin-left:50px;color:green" >{{model_finished}}</h3>
+                      
 
               </div>
 
@@ -59,7 +61,7 @@
 
                 </div>
                 <div class="col-md-12">
-                  <iframe  style="margin:0; width:100%; border:none; overflow:hidden;" scrolling="no"  src={{facetime_bar_gif}}> </iframe>
+                  <iframe  style="margin:0; width:100%; border:none; overflow:hidden;" loop='no' scrolling="no"  src={{facetime_bar_gif}}> </iframe>
                 </div>
           </div>
 

@@ -37,6 +37,8 @@ def stats(pwd_SQL):
     
     timeseries_df=pd.DataFrame(results,columns=["frame_id","name","time","record_source","date"])
     
+    timeseries_df=timeseries_df[timeseries_df["frame_id"]==timeseries_df["frame_id"].max()]
+    
     for i in timeseries_df["name"].unique():
         timeseries_df[i]=timeseries_df[timeseries_df["name"]==i]["time"]
         timeseries_df[i].fillna(0,inplace=True)

@@ -1,7 +1,8 @@
 
 
 #Ploting timeseries of facetime
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation, PillowWriter  
 import numpy as np
 import imageio
 import os
@@ -9,7 +10,7 @@ import glob
 import math
 
 
-def plot_bars(timeseries_df,length_each_frame):
+def plot_bars(timeseries_df,length_each_frame,):
     timeseries_df2=timeseries_df.copy()
     timeseries_df2.pop("name")
     time_cumsum=timeseries_df2.pop("time").cumsum()
@@ -51,7 +52,11 @@ def plot_bars(timeseries_df,length_each_frame):
            "lightseagreen","mediumaquamarine", "mediumturquoise", "skyblue",
            "powderblue","darkseagreen", "palegreen", "darkgrey","silver","gainsboro",
            "khaki", "moccasin","bisque","thistle"]
-
+    
+    
+    
+    
+    
     for i in timeseries_df.iterrows():
         for ii in np.arange(len(order)):
             x_speak.append(i[1][(order[ii])])
@@ -69,7 +74,7 @@ def plot_bars(timeseries_df,length_each_frame):
         imss.append(ims)
         
     #Saving the frames
-        plt.savefig('static/gif/all/'+str(ims)+'.png',dpi=150)
+        plt.savefig('static/gif/all/'+str(ims)+'.png')  #dpi=150
         # plt.show()
 
         
@@ -80,7 +85,7 @@ def plot_bars(timeseries_df,length_each_frame):
     
     
     images = [imageio.imread(file) for file in files]
-    imageio.mimwrite('static/gif/facetime_bar.gif', images, fps=1/length_each_frame)
+    imageio.mimwrite('static/gif/facetime_bar.gif', images, fps=1/length_each_frame,duration=1)
     
     print("GIF saved")
     

@@ -6,12 +6,22 @@ from Face_recognition import face_recon
 from from_sql_processing import stats
 import pandas as pd
 import cv2
-
+# from flask.ext.cache import Cache
 
 
 app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+
+# # Cache solution
+# cache = Cache(app,config={'CACHE_TYPE': 'null'})
+
+# # app.config["CACHE_TYPE"] = "null"
+
+# cache.init_app(app)
+
+
 
 
 app.secret_key = "secret key"
@@ -81,7 +91,7 @@ def face_models():
             face_recon(file_name,pwd_SQL)
             print('Face recognition done')
             
-            
+            model_finished = "Model has finished running"
             # Import to SQL
             
             
@@ -90,34 +100,45 @@ def face_models():
                 # 6
             
             # df = pd.DataFrame()
-            stats(pwd_SQL)
-            # total_video_length, upload_date,unique_speakers_identified,video_name, df = stats(pwd_SQL)
+            # stats(pwd_SQL)
             
-            total_video_length = 92
-            upload_date = '2020-08-25'
-            unique_speakers_identified = 6
-            video_name = 'video.mp4'
             
-            return render_template("home/face_recognition.html", \
-                                   total_video_length = total_video_length,\
-                                   upload_date = upload_date,\
-                                   unique_speakers_identified = unique_speakers_identified,\
-                                   video_name = video_name)  
+            
+            
+            return render_template("home/face_recognition.html",model_finished=model_finished)
         
         
         elif 'show_video' in request.form:
             video = '/static/video/final.mp4'
             
-            df = pd.DataFrame({'name': ['Somu', 'Kiku', 'Amol', 'Lini'],
-                        'physics': [68, 74, 77, 78],
-                        'chemistry': [84, 56, 73, 69],
-                        'algebra': [78, 88, 82, 87]})
+            
+            # SQL Password
+            pwd_SQL = "tKaNblvrQipO1!"
+            # pwd_SQL = 'tasmania'
+            
+            
+            # df = pd.DataFrame({'name': ['Somu', 'Kiku', 'Amol', 'Lini'],
+            #             'physics': [68, 74, 77, 78],
+            #             'chemistry': [84, 56, 73, 69],
+            #             'algebra': [78, 88, 82, 87]})
+            
+            # total_video_length = 92
+            # upload_date = '2020-08-25'
+            # unique_speakers_identified = 6
+            # video_name = 'video.mp4'
+            
+            total_video_length, upload_date,unique_speakers_identified,video_name, df = stats(pwd_SQL)
+           
             
             facetime_bar_gif='/static/gif/facetime_bar.gif'
             return render_template("home/face_recognition.html", \
                                    videos = video,tables=[df.to_html(classes='table table-hover')],\
                                    titles=df.columns.values,\
-                                   facetime_bar_gif = facetime_bar_gif)
+                                   facetime_bar_gif = facetime_bar_gif, \
+                                   total_video_length = total_video_length,\
+                                   upload_date = upload_date,\
+                                   unique_speakers_identified = unique_speakers_identified,\
+                                   video_name = video_name)
                                      
         
     else:
@@ -137,7 +158,8 @@ def tables():
     return render_template("home/ui-tables.html",tables=[df.to_html(classes='table table-hover')], titles=df.columns.values)
 
 
-    
+
+   
 # @app.route("/upload", methods=['POST','GET'])
 # def upload_video():
 #     if request.method == 'POST':

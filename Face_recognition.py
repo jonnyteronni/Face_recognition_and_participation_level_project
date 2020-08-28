@@ -30,7 +30,7 @@ def face_recon(FILE_NAME,pwd_SQL):
 
     # -------DASHBOARD--------
 
-    type_of_input = 'w'
+    type_of_input = 'v'
 
 
     video_input= 'static/video/'+str(FILE_NAME)
@@ -260,7 +260,7 @@ def face_recon(FILE_NAME,pwd_SQL):
         # Print FPS
 
         fps_counter= 1/(time.time() - initial_frame)
-        print(f'\rProcessing: {fps_counter}', end='', flush=True)
+        print(fps_counter)
     # Loop end -----------------------------------------------------------------
 
     # Print facetime stats

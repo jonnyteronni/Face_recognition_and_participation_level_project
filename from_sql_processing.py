@@ -3,12 +3,12 @@ import os, sys
 import mysql.connector
 import pandas as pd
 sys.path.append(os.path.abspath("../"))
-from Plot_graphs import plot_bars
+# from Plot_graphs import plot_bars
 
 
 def stats(pwd_SQL):
-    cnx = mysql.connector.connect(user = 'root', password = pwd_SQL,host ='localhost',
-                                  database = 'project9')
+    cnx = mysql.connector.connect(user = 'antero', password = 'root',host ='35.192.100.10',
+                                  database = 'timeseries')
     
     # #TO DELETE EXISTING ENTRIES IN THE DATABASE
     # try:
@@ -35,9 +35,16 @@ def stats(pwd_SQL):
     
     time_count={}
     
-    timeseries_df=pd.DataFrame(results,columns=["frame_id","name","time","record_source","date"])
+    timeseries_df=pd.DataFrame(results,columns=["id","frame_id","name","time","record_source","date"])
+    
+    timeseries_df.pop('id')
+    
+    timeseries_raw_data_df = timeseries_df.copy()
     
     timeseries_df=timeseries_df[timeseries_df["frame_id"]==timeseries_df["frame_id"].max()]
+    
+    
+    
     
     for i in timeseries_df["name"].unique():
         timeseries_df[i]=timeseries_df[timeseries_df["name"]==i]["time"]
@@ -104,12 +111,6 @@ def stats(pwd_SQL):
     
     print(timeseries_df3)
     
-    plot_bars(timeseries_df,length_each_frame)
+    # plot_bars(timeseries_df,length_each_frame,video_name)
     
-    return total_video_length, upload_date,unique_speakers_identified,video_name,timeseries_df3
-
-
-
-
-
-
+    return total_video_length, upload_date,unique_speakers_identified,video_name, length_each_frame, timeseries_df3, timeseries_df, timeseries_raw_data_df

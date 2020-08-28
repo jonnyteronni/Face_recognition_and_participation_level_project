@@ -30,7 +30,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     
     # -------DASHBOARD--------
 
-    type_of_input = 'v'
+    type_of_input = 'w'
 
     
     video_input= 'static/video/'+str(FILE_NAME)
@@ -123,14 +123,38 @@ def face_recon(FILE_NAME,pwd_SQL):
     face_names = []
     # process_this_frame = True
     
+    
+    
 
     
-    frame_list = []
+        #Length of video, total of frames and length of each frame
     
-    # while webcam.isOpened():
+    
+    
+    if (type_of_input == 'w') | (type_of_input == 'v'):
+        
+        frame_width = int(webcam.get(3))
+        frame_height = int(webcam.get(4)) 
+        fps = webcam.get(cv2.CAP_PROP_FPS)
+        length_each_frame = 1/fps
+
+       
+        
+        
+    elif (type_of_input=='sp') | (type_of_input=='fs'):
+        frame_width = monitor['width']
+        frame_height = monitor['height']
+        fps=30
+    
+    
+    fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
+    out = cv2.VideoWriter('static/video/output_temp.mp4',fourcc, fps , (frame_width,frame_height))
+    
+
+    
+    # Loop Begin -----------------------------------------------------------------
+    
     while True:
-        # Grab a single frame of video
-        # ret, frame = video_capture.read()
         
         initial_frame = time.time()
         name="none"
@@ -144,28 +168,17 @@ def face_recon(FILE_NAME,pwd_SQL):
     
         elif type_of_input=='sp' or type_of_input=='fs':
             webcam = np.array(sct.grab(monitor))
-            # webcam = cv2.cvtColor(webcam, cv2.COLOR_RGB2BGR)
-            # webcam = cv2.resize(webcam,dsize)
+
             frame = np.delete(webcam, np.s_[-1], 2)
             
         frame_count+=1
-        # Frame from RGB to Gray
-        # frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)    
-    
-        # Resize frame of video to 1/4 size for faster face recognition processing
-        # small_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
-        # small_frame = frame
+
         
         small_frame = cv2.resize(frame, (0, 0), fx=RESIZE_FRAME_PERC, fy=RESIZE_FRAME_PERC)
-        # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
-        # rgb_small_frame = small_frame[:, :, ::-1]
-        # rgb_small_frame = small_frame
+
         
         rgb_small_frame = small_frame
-        
-        # Only process every other frame of video to save time
-        # if process_this_frame:
-            
+
             
         # Find all the faces and face encodings in the current frame of video
         face_locations = face_recognition.face_locations(rgb_small_frame,model = MODEL_LOCATION)
@@ -177,11 +190,7 @@ def face_recon(FILE_NAME,pwd_SQL):
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(known_faces, face_encoding, tolerance=TOLERANCE_RECOGNITION)
             name = "Unknown"
-    
-            # # If a match was found in known_face_encodings, just use the first one.
-            # if True in matches:
-            #     first_match_index = matches.index(True)
-            #     name = known_names[first_match_index]
+
     
             # Or instead, use the known face with the smallest distance to the new face
             face_distances = face_recognition.face_distance(known_faces, face_encoding)
@@ -197,10 +206,10 @@ def face_recon(FILE_NAME,pwd_SQL):
             
          
        
-                # Facetime measures to time dictionary
+        # Facetime measures to time dictionary
       
        
-        none_counter_limit=3 # Change here the number of frames we want to facetime for the breakt time
+        none_counter_limit=3 # Change here the number of frames we want to facetime for the break time
         for i in face_names:
             if (none_counter<none_counter_limit) & (len(face_names)>0) :
                 timeseries.append([i,1/len(face_names)])
@@ -227,17 +236,12 @@ def face_recon(FILE_NAME,pwd_SQL):
             cv2.putText(frame, name, (left + 6, bottom + 15), font, 0.5, (255, 255, 255), 1)
     
         # Save frame to output video
-        # out.write(frame)
-    
-        frame_list.append(frame)
+        out.write(frame)
         
         # Display the resulting image
         if type_of_input != 'v':
           cv2.imshow('Smile you are on camera!!!', frame) 
 
-        
-        
-        
         # Hit 'q' on the keyboard to quit!
         if cv2.waitKey(1) & 0xFF == ord('q'):
             # if 0xFF == ord('q'):
@@ -245,8 +249,8 @@ def face_recon(FILE_NAME,pwd_SQL):
             break
         
 
-        #     # Facetime breaktime to time dictionary
-        # none_counter_limit=3 # Change here the number of frames we want to facetime for the breakt time
+        # Facetime breaktime to time dictionary
+        none_counter_limit=3 # Change here the number of frames we want to facetime for the breakt time
         if (none_counter>=none_counter_limit):
             timeseries.append(["break_time",1])
         
@@ -254,139 +258,104 @@ def face_recon(FILE_NAME,pwd_SQL):
         
         
         # Print FPS
-        print(1/(time.time() - initial_frame))   
 
-    
-    
+        fps_counter= 1/(time.time() - initial_frame)
+        print(f'\rProcessing: {fps_counter}', end='', flush=True)
+    # Loop end -----------------------------------------------------------------
     
     # Print facetime stats
     print("Total", (time.time() - initial_total))
-    
-    
 
-    # Release handle to the webcam
-    if (type_of_input == 'w'): #################
-        webcam.release()
-    
+
     cv2.destroyAllWindows()
-
-    
-    
-    #Length of video, total of frames and length of each frame
-    
-    
-    
-    if (type_of_input == 'w') | (type_of_input == 'v'):
-
-        fps_temp = webcam.get(cv2.CAP_PROP_FPS)
-
-        total_frames=frame_count
-        
-        length_video=total_frames/fps_temp
-        
-        length_each_frame=length_video/total_frames
-
-
-    elif (type_of_input=='sp') | (type_of_input=='fs'):
-        length_video=(time.time() - initial_total)
-        total_frames=frame_count
-        length_each_frame=length_video/total_frames
-    
-
-    
     # define variables for output video
     
-    if type_of_input == 'w' or type_of_input=='v':
-        # frame size of webcam or video
-        frame_width = int(webcam.get(3))
-        frame_height = int(webcam.get(4))
+    # if type_of_input == 'w' or type_of_input=='v':
+    #     # frame size of webcam or video
+    #     frame_width = int(webcam.get(3))
+    #     frame_height = int(webcam.get(4))
          
-        fps = int(webcam.get(cv2.CAP_PROP_FPS))
+    #     # fps = int(webcam.get(cv2.CAP_PROP_FPS))
      
        
         
-    elif type_of_input=='sp' or type_of_input=='fs':
-        # frame size of webcam or video
-        frame_width = monitor['width']
-        frame_height = monitor['height']
-        
-        
-        fps = 1/length_each_frame
-        
-    # Codec
-    fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-    
-    
-    # Output file
-    # out = cv2.VideoWriter('static/video/output_temp.mp4',fourcc, fps , (frame_width,frame_height))
-    # for frame in frame_list:
-
-    #     out.write(frame)
-    
-    # out.release()
-    # os.system("ffmpeg -i static/video/output_temp.mp4 -vcodec libx264 static/video/final.mp4 -y")
-    
-  
-    frame_list2=[]
-    for frame in frame_list:
-        frame_list2.append(cv2.cvtColor(np.array(frame), cv2.COLOR_BGR2RGB))
-    
-    imageio.mimwrite('static/video/final.gif', frame_list2, fps=1/length_each_frame)
-    
-    print("Video_GIF saved")
-    
-    
-    
-    
-    
-    #Creating timeseries to export to sql
-    
+    if type_of_input=='sp' or type_of_input=='fs':
+        length_video=(time.time() - initial_total)
+        total_frames=frame_count
+        length_each_frame=length_video/total_frames
 
         
+    # Release handle to the webcam
+    webcam.release()
     
-    timeseries_sql=pd.DataFrame(timeseries,columns=["name","time"])
-    
-    timeseries_sql["time"]=timeseries_sql["time"]*length_each_frame
-    
-    source={"w":"webcam","sp":"screen_part","fs":"fullscreen", "v":str("video"+"_"+video_input)}
-    timeseries_sql["record_source"]=source[type_of_input]
 
-    #Checking and create video_id (called frame id in SQL)
-    cnx = mysql.connector.connect(user = 'root', password = pwd_SQL,host ='localhost',
-                              database = 'project9')
-    try:
-        cnx.is_connected()
-        print("Connection open")
-        cursor = cnx.cursor()
-        query = ("SELECT * FROM timeseries;")
-        cursor.execute(query)
-        results = cursor.fetchall()
     
-    except print("Connection is not successfully open"):
-        pass
     
-    timeseries_df=pd.DataFrame(results,columns=["frame_id","name","time","record_source","date"])
+    out.release()    
+    os.system(f"ffmpeg -i static/video/output_temp.mp4 -vcodec libx264 static/video/final_{FILE_NAME} -y")
 
-    if timeseries_df["frame_id"].max() > 0:
-        timeseries_sql["frame_id"]=(timeseries_df["frame_id"].max()+1)
-    else:
-        timeseries_sql["frame_id"]=1
+    
+    print("Video file processed")
+    
+    
+    
+    
+    if type_of_input == 'v':
+        #Creating timeseries to export to sql
+        # enter your server IP address/domain name
+        HOST = "35.192.100.10" # or "domain.com"
+        # database name, if you want just to connect to MySQL server, leave it empty
+        DATABASE = "timeseries"
+        # this is the user you create
+        USER = "antero"
+        # user password
+        PASSWORD = "root"
+        # connect to MySQL server
+    
         
+        timeseries_sql=pd.DataFrame(timeseries,columns=["name","time"])
         
-    timeseries_sql=timeseries_sql[['frame_id','name', 'time', 'record_source']]
+        timeseries_sql["time"]=timeseries_sql["time"]*length_each_frame
+        
+        source={"w":"webcam","sp":"screen_part","fs":"fullscreen", "v":str("video"+"_"+video_input)}
+        timeseries_sql["record_source"]=source[type_of_input]
     
-    # create sqlalchemy engine
-    engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}"
-                           .format(user="root",
-                                   pw=pwd_SQL,
-                                   db="project9"))
+        #Checking and create video_id (called frame id in SQL)
+        cnx = mysql.connector.connect(user = USER, password = "root",host = HOST,
+                                  database = DATABASE)
+        try:
+            cnx.is_connected()
+            print("Connection open")
+            cursor = cnx.cursor()
+            query = ("SELECT * FROM timeseries;")
+            cursor.execute(query)
+            results = cursor.fetchall()
+        
+        except print("Connection is not successfully open"):
+            pass
+        
+        timeseries_df=pd.DataFrame(results,columns=["id","frame_id","name","time","record_source","date"])
     
-    timeseries_sql.to_sql('timeseries', con = engine, if_exists = "append",index=False)
-    
-    print("Exported to SQL")
+        if timeseries_df["frame_id"].max() > 0:
+            timeseries_sql["frame_id"]=(timeseries_df["frame_id"].max()+1)
+        else:
+            timeseries_sql["frame_id"]=1
+            
+            
+        timeseries_sql=timeseries_sql[['frame_id','name', 'time', 'record_source']]
+        
+        # create sqlalchemy engine
+        engine = create_engine("mysql+pymysql://{user}:{pw}@35.192.100.10/{db}"
+                               .format(user='antero',
+                                       pw='root',
+                                       db='timeseries'))
+        
+        timeseries_sql.to_sql('timeseries', con = engine, if_exists = "append",index=False)
+        
+        print("Exported to SQL")
     
 
-    return timeseries
+    return fps
 
 
 

@@ -26,7 +26,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     # -------DASHBOARD--------
     type_of_input = 'v'
     
-    video_input= 'static/video/'+str(FILE_NAME)
+    video_input= 'flask/static/video/'+str(FILE_NAME)
 
     # # SQL Password
     # pwd = "tKaNblvrQipO1!"
@@ -47,7 +47,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     TOLERANCE_RECOGNITION = 0.6
     
     # Frame resizing (integers 1 to X)
-    RESIZE_FRAME = 3
+    RESIZE_FRAME = 5
     
     
     # -------------
@@ -250,23 +250,19 @@ def face_recon(FILE_NAME,pwd_SQL):
     
     
     if (type_of_input == 'w') | (type_of_input == 'v'):
-<<<<<<< HEAD:Face_recognition.py
+
         fps_temp = webcam.get(cv2.CAP_PROP_FPS)
-=======
+
         length_video=webcam.get(cv2.CAP_PROP_POS_MSEC)/1000 #seconds
         print(webcam.get(cv2.CAP_PROP_POS_MSEC)/1000)
         print(webcam.get(cv2.CAP_PROP_FRAME_COUNT))
->>>>>>> 57c2a3855d2f96dc187ddbfa4065fe20a94ad393:legacy_scripts/Face_recognition-26-08-2020.py
+
         total_frames=frame_count
         
-        length_video=total_frames/fps_temp
+        # length_video=total_frames/fps_temp
         
-        length_each_frame=length_video/total_frames
-<<<<<<< HEAD:Face_recognition.py
-        
-=======
+        length_each_frame = 1/fps_temp
 
->>>>>>> 57c2a3855d2f96dc187ddbfa4065fe20a94ad393:legacy_scripts/Face_recognition-26-08-2020.py
     elif (type_of_input=='sp') | (type_of_input=='fs'):
         length_video=(time.time() - initial_total)
         total_frames=frame_count
@@ -320,14 +316,14 @@ def face_recon(FILE_NAME,pwd_SQL):
     
     # create sqlalchemy engine
     engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}"
-                           .format(user="root",
+                           .format(user="bHGF4ohr9K",
                                    pw=pwd_SQL,
-                                   db="project9"))
+                                   db="bHGF4ohr9K"))
     
     timeseries_sql.to_sql('timeseries', con = engine, if_exists = "append",index=False)
     
     print("Exported to SQL")
     
     
-
+face_recon("Speaker_small.mp4",'C5wVcaUaiC')
 

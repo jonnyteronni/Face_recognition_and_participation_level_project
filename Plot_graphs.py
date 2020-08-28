@@ -8,9 +8,10 @@ import imageio
 import os
 import glob
 import math
+import cv2
 
 
-def plot_bars(timeseries_df,length_each_frame,):
+def plot_bars(timeseries_df,length_each_frame):
     timeseries_df2=timeseries_df.copy()
     timeseries_df2.pop("name")
     time_cumsum=timeseries_df2.pop("time").cumsum()
@@ -33,10 +34,6 @@ def plot_bars(timeseries_df,length_each_frame,):
     except KeyError :
         pass
         
-    files = glob.glob('../gif/all/*')
-    for f in files:
-        os.remove(f)
-    
     order=timeseries_df2.max().sort_values(ascending=False).keys().tolist() #####
     
     
@@ -76,18 +73,55 @@ def plot_bars(timeseries_df,length_each_frame,):
     #Saving the frames
         plt.savefig('static/gif/all/'+str(ims)+'.png')  #dpi=150
         # plt.show()
-
+    
+    
+    
+    
+    
+    save_id=str(np.random.randint(100)) #########################
+    frame_width=1280 # frame_width = int(webcam.get(3)) #########
+    frame_height=972# frame_height = int(webcam.get(4)) #################
+    fps=1/length_each_frame
+    
+    
+    # Codec
+    fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+    
+    out = cv2.VideoWriter('static/gif/output_temp'+save_id+'.mp4',fourcc, fps, (1080,216))
+    for frame in imss:#np.arange(1,imss+1,1):
+        path='static/gif/all/'+str(frame)+".jpg"
+      
+        frame2=cv2.imread(path,flags=cv2.IMREAD_COLOR)
+        # print(frame2)
+        # frame2 = cv2.imread(path,cv2.IMREAD_UNCHANGED)[:,:,-1]
         
+        out.write(frame2)
     
-    #Creating Gif
-    folder = 'static/gif/all' 
-    files = [f"{folder}/{file}.png" for file in (imss)]
+    out.release()
+    # os.system("ffmpeg -i static/gif/facetime_bar"+save_id+".mp4 -vcodec libx264 static/gif/facetime_bar"+save_id+".mp4 -y")
+    
+    files = glob.glob('../gif/all/*')
+    for f in files:
+        os.remove(f)
+    
+    print("Plot bar video saved")
+    
+
+    
+    # #Creating Gif
+    # folder = 'static/gif/all' 
+    # files = [f"{folder}/{file}.png" for file in (imss)]
     
     
-    images = [imageio.imread(file) for file in files]
-    imageio.mimwrite('static/gif/facetime_bar.gif', images, fps=1/length_each_frame)
+    # images = [imageio.imread(file) for file in files]
+    # imageio.mimwrite('static/gif/facetime_bar.gif', images, fps=1/length_each_frame)
     
-    print("GIF saved")
+    # print("GIF saved")
+    
+    # files = glob.glob('../gif/all/*')
+    # for f in files:
+    #     os.remove(f)
+    
     
     
     

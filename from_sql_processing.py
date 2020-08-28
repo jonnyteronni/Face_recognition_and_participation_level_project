@@ -35,9 +35,11 @@ def stats(pwd_SQL):
     
     time_count={}
     
-    timeseries_df=pd.DataFrame(results,columns=["frame_id","name","time","record_source","date"])
+    timeseries_df=pd.DataFrame(results,columns=["id","frame_id","name","time","record_source","date"])
     
     timeseries_df=timeseries_df[timeseries_df["frame_id"]==timeseries_df["frame_id"].max()]
+    
+    timeseries_df.pop("id") #####################
     
     for i in timeseries_df["name"].unique():
         timeseries_df[i]=timeseries_df[timeseries_df["name"]==i]["time"]

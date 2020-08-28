@@ -115,30 +115,32 @@ def face_models():
         
         elif 'show_video' in request.form:
                        
-            
-            # SQL Password
-            pwd_SQL = "tKaNblvrQipO1!"
-            # pwd_SQL = 'tasmania'
-            session['SQL_PASSWORD'] = str(pwd_SQL)
-            
-
-            fps = float(session.get('FPS'))
-            total_video_length, upload_date,unique_speakers_identified,video_name,length_each_frame, final_stats_df, timeseries_df,df_raw_data = stats(pwd_SQL)
-            
-
-            
-            video = f'/static/video/final_{video_name}'
-            facetime_bar_gif=f'/static/gif/bar_graph_{video_name}'
-            # facetime_bar_gif = None
-            
-            return render_template("home/face_recognition.html", \
-                                   videos = video,tables=[final_stats_df.to_html(classes='table table-hover')],\
-                                   facetime_bar_gif = facetime_bar_gif, \
-                                   total_video_length = total_video_length,\
-                                   upload_date = upload_date,\
-                                   unique_speakers_identified = unique_speakers_identified,\
-                                   video_name = video_name)
-                                     
+            try:
+                # SQL Password
+                pwd_SQL = "tKaNblvrQipO1!"
+                # pwd_SQL = 'tasmania'
+                session['SQL_PASSWORD'] = str(pwd_SQL)
+                
+    
+                fps = float(session.get('FPS'))
+                total_video_length, upload_date,unique_speakers_identified,video_name,length_each_frame, final_stats_df, timeseries_df,df_raw_data = stats(pwd_SQL)
+                
+    
+                
+                video = f'/static/video/final_{video_name}'
+                facetime_bar_gif=f'/static/gif/bar_graph_{video_name}'
+                # facetime_bar_gif = None
+                
+                return render_template("home/face_recognition.html", \
+                                       videos = video,tables=[final_stats_df.to_html(classes='table table-hover')],\
+                                       facetime_bar_gif = facetime_bar_gif, \
+                                       total_video_length = total_video_length,\
+                                       upload_date = upload_date,\
+                                       unique_speakers_identified = unique_speakers_identified,\
+                                       video_name = video_name)
+            except TypeError as err:
+                print(err)
+                return render_template("home/face_recognition.html")
         
     else:
     
@@ -152,15 +154,25 @@ def tables():
     pwd_SQL = session.get('SQL_PASSWORD')
     
     df_raw_data = stats(pwd_SQL)[7]
-    #Filter big class
-    df_raw_data=df_raw_data[df_raw_data['frame_id']!=21]
     
+    
+    #Filters and datacleaning
+    df_raw_data=df_raw_data[df_raw_data['frame_id']!=21]
+    df_raw_data=df_raw_data[df_raw_data['name']!='Unknown']
+    df_raw_data['time'] = df_raw_data['time'].round(2)
     df_raw_data['Video_id'] = df_raw_data['frame_id']
     df_raw_data.drop('frame_id', axis = 1, inplace=True)
-    df_raw_data = df_raw_data.set_index('Video_id')
     
+    # df_raw_data = df_raw_data.set_index('Video_id')
+    
+    
+    
+    df_raw_data = df_raw_data[['Video_id','name','time','record_source','date']]
+    df_group_data = df_raw_data.groupby(by=['Video_id','name','record_source','date']).sum()
+    # df_raw_data.sort_values(by=['Video_id'], ascending=False, inplace=True)
+    # df_group_data= df_raw_data.groupby(by=['Video_id','record_source','date']).sum()
 
-    return render_template("home/ui-tables.html",tables=[df_raw_data.to_html(classes='table table-hover', table_id=None)])
+    return render_template("home/ui-tables.html",tables=[df_group_data.to_html(classes='table table-hover')])
 
 @app.route("/stats")
 def stats_function():
@@ -177,4 +189,4 @@ def stats_function():
 
 
 if __name__ == "__main__":
-    app.run(port=4555, debug=False)
+    app.run(port=4555, debug=True)

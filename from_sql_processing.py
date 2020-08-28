@@ -52,7 +52,7 @@ def stats(pwd_SQL):
         timeseries_df[i]=timeseries_df[i].cumsum()
         time_count[i]= timeseries_df[i].max()
 
-
+    
 
     ##Split none time % to users
     time_count_no_none=time_count.copy()
@@ -75,7 +75,7 @@ def stats(pwd_SQL):
     time_count.pop("break_time",None)
 
 
-
+    
     #STATS
 
     total_video_length=round(timeseries_df["time"].sum(),1)

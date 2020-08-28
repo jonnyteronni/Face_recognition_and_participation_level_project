@@ -115,49 +115,32 @@ def face_models():
         
         elif 'show_video' in request.form:
                        
-            
-            # SQL Password
-            pwd_SQL = "tKaNblvrQipO1!"
-            # pwd_SQL = 'tasmania'
-            session['SQL_PASSWORD'] = str(pwd_SQL)
-            
-            
-            # df = pd.DataFrame({'name': ['Somu', 'Kiku', 'Amol', 'Lini'],
-            #             'physics': [68, 74, 77, 78],
-            #             'chemistry': [84, 56, 73, 69],
-            #             'algebra': [78, 88, 82, 87]})
-            
-            # total_video_length = 92
-            # upload_date = '2020-08-25'
-            # unique_speakers_identified = 6
-            # video_name = 'video.mp4'
-            fps = float(session.get('FPS'))
-            total_video_length, upload_date,unique_speakers_identified,video_name,length_each_frame, final_stats_df, timeseries_df,df_raw_data = stats(pwd_SQL)
-            
-            
-            #######################################
-            # plot_bars(timeseries_df,length_each_frame,video_name)
-           #########################################
-            
-            
-            
-            # session['DF_RAW_DATA_COLUMNS'] = str(df_raw_data.columns)
-            # for column in df_raw_data:
-                           
-            #     session[column] = str(df_raw_data[column])
-            
-            video = f'/static/video/final_{video_name}'
-            facetime_bar_gif=f'/static/gif/bar_graph_{video_name}'
-            # facetime_bar_gif = None
-            
-            return render_template("home/face_recognition.html", \
-                                   videos = video,tables=[final_stats_df.to_html(classes='table table-hover')],\
-                                   facetime_bar_gif = facetime_bar_gif, \
-                                   total_video_length = total_video_length,\
-                                   upload_date = upload_date,\
-                                   unique_speakers_identified = unique_speakers_identified,\
-                                   video_name = video_name)
-                                     
+            try:
+                # SQL Password
+                pwd_SQL = "tKaNblvrQipO1!"
+                # pwd_SQL = 'tasmania'
+                session['SQL_PASSWORD'] = str(pwd_SQL)
+                
+    
+                fps = float(session.get('FPS'))
+                total_video_length, upload_date,unique_speakers_identified,video_name,length_each_frame, final_stats_df, timeseries_df,df_raw_data = stats(pwd_SQL)
+                
+    
+                
+                video = f'/static/video/final_{video_name}'
+                facetime_bar_gif=f'/static/gif/bar_graph_{video_name}'
+                # facetime_bar_gif = None
+                
+                return render_template("home/face_recognition.html", \
+                                       videos = video,tables=[final_stats_df.to_html(classes='table table-hover')],\
+                                       facetime_bar_gif = facetime_bar_gif, \
+                                       total_video_length = total_video_length,\
+                                       upload_date = upload_date,\
+                                       unique_speakers_identified = unique_speakers_identified,\
+                                       video_name = video_name)
+            except TypeError as err:
+                print(err)
+                return render_template("home/face_recognition.html")
         
     else:
     
@@ -167,28 +150,29 @@ def face_models():
 @app.route("/ui-tables")
 def tables():
 
-    # df = pd.DataFrame({'name': ['Somu', 'Kiku', 'Amol', 'Lini'],
-    #                     'physics': [68, 74, 77, 78],
-    #                     'chemistry': [84, 56, 73, 69],
-    #                     'algebra': [78, 88, 82, 87]})
-    
-    # df_raw_data_columns = session.get('DF_RAW_DATA_COLUMNS')
-    # # df_raw_data = df_raw_data.astype(float)
-    # print(df_raw_data_columns)
-    
-    # columns_temp = df_raw_data_columns.split("'")
-    # print(columns_temp)
-    # # for column in df_raw_data_columns:
-    # #     print(column)
+
     pwd_SQL = session.get('SQL_PASSWORD')
     
     df_raw_data = stats(pwd_SQL)[7]
     
+    
+    #Filters and datacleaning
+    df_raw_data=df_raw_data[df_raw_data['frame_id']!=21]
+    df_raw_data=df_raw_data[df_raw_data['name']!='Unknown']
+    df_raw_data['time'] = df_raw_data['time'].round(2)
     df_raw_data['Video_id'] = df_raw_data['frame_id']
     df_raw_data.drop('frame_id', axis = 1, inplace=True)
-    df_raw_data = df_raw_data.set_index('Video_id')
+    
+    # df_raw_data = df_raw_data.set_index('Video_id')
+    
+    
+    
+    df_raw_data = df_raw_data[['Video_id','name','time','record_source','date']]
+    df_group_data = df_raw_data.groupby(by=['Video_id','name','record_source','date']).sum()
+    # df_raw_data.sort_values(by=['Video_id'], ascending=False, inplace=True)
+    # df_group_data= df_raw_data.groupby(by=['Video_id','record_source','date']).sum()
 
-    return render_template("home/ui-tables.html",tables=[df_raw_data.to_html(classes='table table-hover', table_id=None)])
+    return render_template("home/ui-tables.html",tables=[df_group_data.to_html(classes='table table-hover')])
 
 @app.route("/stats")
 def stats_function():
@@ -204,14 +188,5 @@ def stats_function():
   
 
 
-
-# @app.route('/video', methods = ['POST','GET'])
-# # def open_video():
-# #     return render_template("video_test.html")
-# def send_file():
-#     # return render_template('video_test.html',filename = 'VIDEO_UPLOAD/output.mp4')
-#     return send_from_directory("VIDEO_UPLOAD", filename = 'output.mp4')
-# bootstrap = Bootstrap(app)
-
 if __name__ == "__main__":
-    app.run(port=4555, debug=False)
+    app.run(port=4555, debug=True)

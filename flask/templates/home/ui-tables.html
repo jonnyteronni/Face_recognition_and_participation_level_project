@@ -1,6 +1,6 @@
 {% extends "base-site.html" %}
 
-{% block title %} UI Tables {% endblock %} 
+{% block title %} UI Tables {% endblock %}
 
 {% block content %}
 
@@ -8,17 +8,15 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-header card-header-primary">
-              <h4 class="card-title ">Simple Table</h4>
-              <p class="card-category"> Here is a subtitle for this table</p>
+              <h4 class="card-title ">Cloud Data</h4>
+              <p class="card-category"> All records from cloud server</p>
             </div>
             <div class="card-body">
               <div class="table-responsive" style="text-align: right;">
                 <table class="table">
                   <thead class=" text-primary">
-                    
+
                     {% for table in tables %}
-                    
-                    {{titles[loop.index]}}
 
                   </thead>
                   <tbody>
@@ -30,6 +28,7 @@
             </div>
           </div>
         </div>
+<!--
         <div class="col-md-12">
           <div class="card card-plain">
             <div class="card-header card-header-primary">
@@ -165,8 +164,11 @@
             </div>
           </div>
         </div>
+-->
+
+
     </div>
-        
+
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->

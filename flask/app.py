@@ -4,21 +4,22 @@ sys.path.append(os.path.abspath("../"))
 from Encode_images_for_face_recognition_byfilename import encode_images
 from Face_recognition import face_recon
 from from_sql_processing import stats
+from Plot_graphs import plot_bars
 import pandas as pd
 import cv2
-from flask_caching import Cache
+# from flask_caching import Cache
 
 app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
-# Cache solution
-cache = Cache(app,config={'CACHE_TYPE': 'null'})
+# # Cache solution
+# cache = Cache(app,config={'CACHE_TYPE': 'null'})
 
-# app.config["CACHE_TYPE"] = "null"
+# # app.config["CACHE_TYPE"] = "null"
 
-cache.init_app(app)
+# cache.init_app(app)
 
 
 
@@ -102,39 +103,23 @@ def face_models():
             
             # Face recognition script
             file_name = session.get('FILE_NAME')
-            face_recon(file_name,pwd_SQL)
+            fps = face_recon(file_name,pwd_SQL)
+            session['FPS'] = str(fps)
             print('Face recognition done')
             
-            model_finished = "Model has finished running"
-            # Import to SQL
-            
-            
-             #SUGESTION FOR FRONTEND:
-                # input.mp4 | 92.8 | 2020-08-25
-                # 6
-            
-            # df = pd.DataFrame()
-            # stats(pwd_SQL)
-            
-            
-            
+            model_finished = "Model has finished running"                 
+                      
             
             return render_template("home/face_recognition.html",model_finished=model_finished)
         
         
         elif 'show_video' in request.form:
-            
-            with app.app_context():
-                cache.clear()
-            
-            
-            
-            video = '/static/video/final.mp4'
-            
+                       
             
             # SQL Password
             pwd_SQL = "tKaNblvrQipO1!"
             # pwd_SQL = 'tasmania'
+            session['SQL_PASSWORD'] = str(pwd_SQL)
             
             
             # df = pd.DataFrame({'name': ['Somu', 'Kiku', 'Amol', 'Lini'],
@@ -146,16 +131,27 @@ def face_models():
             # upload_date = '2020-08-25'
             # unique_speakers_identified = 6
             # video_name = 'video.mp4'
-            
-            total_video_length, upload_date,unique_speakers_identified,video_name, df = stats(pwd_SQL)
-           
-            
+            fps = float(session.get('FPS'))
+            total_video_length, upload_date,unique_speakers_identified,video_name,length_each_frame, final_stats_df, timeseries_df,df_raw_data = stats(pwd_SQL)
             
             
-            facetime_bar_gif='/static/gif/facetime_bar.gif'
+            #######################################
+            # plot_bars(timeseries_df,length_each_frame,video_name)
+           #########################################
+            
+            
+            
+            # session['DF_RAW_DATA_COLUMNS'] = str(df_raw_data.columns)
+            # for column in df_raw_data:
+                           
+            #     session[column] = str(df_raw_data[column])
+            
+            video = f'/static/video/final_{video_name}'
+            facetime_bar_gif=f'/static/gif/bar_graph_{video_name}'
+            # facetime_bar_gif = None
+            
             return render_template("home/face_recognition.html", \
-                                   videos = video,tables=[df.to_html(classes='table table-hover')],\
-                                   titles=df.columns.values,\
+                                   videos = video,tables=[final_stats_df.to_html(classes='table table-hover')],\
                                    facetime_bar_gif = facetime_bar_gif, \
                                    total_video_length = total_video_length,\
                                    upload_date = upload_date,\
@@ -170,74 +166,42 @@ def face_models():
 
 @app.route("/ui-tables")
 def tables():
-    
-    df = pd.DataFrame({'name': ['Somu', 'Kiku', 'Amol', 'Lini'],
-                        'physics': [68, 74, 77, 78],
-                        'chemistry': [84, 56, 73, 69],
-                        'algebra': [78, 88, 82, 87]})
-    
-       
-    return render_template("home/ui-tables.html",tables=[df.to_html(classes='table table-hover')], titles=df.columns.values)
 
+    # df = pd.DataFrame({'name': ['Somu', 'Kiku', 'Amol', 'Lini'],
+    #                     'physics': [68, 74, 77, 78],
+    #                     'chemistry': [84, 56, 73, 69],
+    #                     'algebra': [78, 88, 82, 87]})
+    
+    # df_raw_data_columns = session.get('DF_RAW_DATA_COLUMNS')
+    # # df_raw_data = df_raw_data.astype(float)
+    # print(df_raw_data_columns)
+    
+    # columns_temp = df_raw_data_columns.split("'")
+    # print(columns_temp)
+    # # for column in df_raw_data_columns:
+    # #     print(column)
+    pwd_SQL = session.get('SQL_PASSWORD')
+    
+    df_raw_data = stats(pwd_SQL)[7]
+    
+    df_raw_data['Video_id'] = df_raw_data['frame_id']
+    df_raw_data.drop('frame_id', axis = 1, inplace=True)
+    df_raw_data = df_raw_data.set_index('Video_id')
+
+    return render_template("home/ui-tables.html",tables=[df_raw_data.to_html(classes='table table-hover', table_id=None)])
+
+@app.route("/stats")
+def stats_function():
+    
+    return render_template("home/stats.html")
+
+    # <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    # <meta http-equiv="Pragma" content="no-cache">
+    # <meta http-equiv="Expires" content="0">
 
 # <video  class="card-body" height=600 style="border:0;border:none"  src={{videos}}> </video>
 # <video height=600 src={{videos}} controls autoplay loop> </video>
-   
-# @app.route("/upload", methods=['POST','GET'])
-# def upload_video():
-#     if request.method == 'POST':
-#         # Video
-#         if 'video_form' in request.form:
-#             target = os.path.join(APP_ROOT, 'static/video')
-        
-#             if not os.path.isdir(target):
-#                 os.mkdir(target)
-        
-#             for file in request.files.getlist("video"):
-#                 FILE_NAME = file.filename
-#                 # FILE_NAME = "input.mp4"
-#                 destination = "/".join([target, FILE_NAME])
-#                 file.save(destination)
-            
-#             return render_template("upload.html")
-        
-        
-#         elif 'images_form' in request.form:
-#             target = os.path.join(APP_ROOT, 'static/images')
-        
-#             if not os.path.isdir(target):
-#                 os.mkdir(target)
-        
-#             for file in request.files.getlist("images"):
-#                 FILE_NAME = file.filename
-#                 destination = "/".join([target, FILE_NAME])
-#                 file.save(destination)
-#             return render_template("upload.html")
-
-        
-#         elif 'run_model' in request.form:
-#             # Model to encode images
-#             encode_images()
-#             print('Images encoded')
-
-#             # Face recognition script
-#             exec(open("../Face_recognition.py").read())
-#             print('Face recognition done')
-            
-#             return render_template("upload.html")
-        
-#         elif 'show_video' in request.form:
-#             video = '/static/video/final.mp4'
-            
-#             return render_template("upload.html", videos = video)        
-       
-        
-#     else:
-#         return render_template("upload.html")
-
-
-
-    
+  
 
 
 

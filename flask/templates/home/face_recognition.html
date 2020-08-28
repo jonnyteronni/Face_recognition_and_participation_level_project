@@ -12,7 +12,7 @@
 
         </div>
         <div class="card-body">
-          <div id="typography">
+          <div id="typography" align="left">
               <div class="row">
                       <form  id="upload-form3" action="{{ url_for('face_models') }}" method="POST" enctype="multipart/form-data">
                           <input name = "run_model" type="submit" value="Run model" id="run_model_button">
@@ -22,7 +22,7 @@
                           <input name = "show_video" type="submit" value="Show video" id="show_video_button">
                       </form>
                       <h3 class="card-title" style="margin-left:50px;color:green" >{{model_finished}}</h3>
-                      
+
 
               </div>
 
@@ -32,21 +32,31 @@
                 <h3 class="card-title" style="margin-right:50px" >Upload date: {{upload_date}}</h3>
                 <h3 class="card-title" style="margin-right:50px" >People: {{unique_speakers_identified}}</h3>
               </div>
+
+
+
+
               <div class="row">
+                <div float='left' padding=50px >
+                  <video controls autoplay loop width=1000 height=600 src={{videos}}> </video>
 
-                  <iframe width=800 height=600 src={{videos}}> </iframe>
+              <script type='text/javascript' src='https://eu-west-1a.online.tableau.com/javascripts/api/viz_v1.js'></script><div class='tableauPlaceholder' style='width: 900px; height: 1000px;'><object class='tableauViz' width='900' height='1000' style='display:none;'><param name='host_url' value='https%3A%2F%2Feu-west-1a.online.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='site_root' value='&#47;t&#47;applieddatascience' /><param name='name' value='Video_Facebar&#47;Dashboard1' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='showAppBanner' value='false' /></object></div>
 
-                  <div class="row">
-                      <div class="col-md-12">
 
-                          <div class="card-body">
-                            <div class="table-responsive" style="text-align: right;">
-                              <table class="table">
-                                <thead class=" text-primary">
+                </div>
+
+
+                    <!--Tabela-->
+                  <div class="row" width=200>
+                      <div width=200>
+                          <div class="card-body" width=200>
+                            <div class="table-responsive" style="width:200;text-align: right;">
+                              <table class="table" width=200>
+                                <thead class=" text-primary" width=200>
 
                                   {% for table in tables %}
 
-                                  {{titles[loop.index]}}
+
 
                                 </thead>
                                 <tbody>
@@ -58,18 +68,10 @@
                           </div>
                         </div>
                       </div>
+                      <!--Tabela-->
 
+        </div>
 
-
-                </div>
-                <div class="col-md-12">
-                  <iframe  style="margin:0; width:100%; border:none; overflow:hidden;" loop='no' scrolling="no"  src={{facetime_bar_gif}}> </iframe>
-                </div>
-          </div>
-
-
-
-      </div>
     </div>
 
  {% include 'site_template/scripts.html' %}

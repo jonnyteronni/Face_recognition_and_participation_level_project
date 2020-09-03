@@ -30,7 +30,7 @@ def face_recon(FILE_NAME,pwd_SQL):
 
     # -------DASHBOARD--------
 
-    type_of_input = 'v'
+    type_of_input = 'fs'
 
 
     video_input= 'static/video/'+str(FILE_NAME)
@@ -215,7 +215,7 @@ def face_recon(FILE_NAME,pwd_SQL):
                 timeseries.append([i,1/len(face_names)])
 
 
-        # Print FPS
+        # Print FPSThere's no excuse not to do what makes you happy.
         print(1/(time.time() - initial_frame))
 
 
@@ -270,13 +270,13 @@ def face_recon(FILE_NAME,pwd_SQL):
     cv2.destroyAllWindows()
     # define variables for output video
 
-    # if type_of_input == 'w' or type_of_input=='v':
+    if type_of_input == 'w' or type_of_input=='v':
     #     # frame size of webcam or video
     #     frame_width = int(webcam.get(3))
     #     frame_height = int(webcam.get(4))
 
     #     # fps = int(webcam.get(cv2.CAP_PROP_FPS))
-
+        webcam.release()
 
 
     if type_of_input=='sp' or type_of_input=='fs':
@@ -286,9 +286,9 @@ def face_recon(FILE_NAME,pwd_SQL):
 
 
     # Release handle to the webcam
-    webcam.release()
-
-
+    
+    if type_of_input!='v':
+        FILE_NAME = 'LIVE.mp4'
 
 
     out.release()
@@ -300,59 +300,59 @@ def face_recon(FILE_NAME,pwd_SQL):
 
 
 
-    if type_of_input == 'v':
-        #Creating timeseries to export to sql
-        # enter your server IP address/domain name
-        HOST = "35.192.100.10" # or "domain.com"
-        # database name, if you want just to connect to MySQL server, leave it empty
-        DATABASE = "timeseries"
-        # this is the user you create
-        USER = "antero"
-        # user password
-        PASSWORD = "root"
-        # connect to MySQL server
+
+    #Creating timeseries to export to sql
+    # enter your server IP address/domain name
+    HOST = "35.192.100.10" # or "domain.com"
+    # database name, if you want just to connect to MySQL server, leave it empty
+    DATABASE = "timeseries"
+    # this is the user you create
+    USER = "antero"
+    # user password
+    PASSWORD = "root"
+    # connect to MySQL server
 
 
-        timeseries_sql=pd.DataFrame(timeseries,columns=["name","time"])
+    timeseries_sql=pd.DataFrame(timeseries,columns=["name","time"])
 
-        timeseries_sql["time"]=timeseries_sql["time"]*length_each_frame
+    timeseries_sql["time"]=timeseries_sql["time"]*length_each_frame
 
-        source={"w":"webcam","sp":"screen_part","fs":"fullscreen", "v":str("video"+"_"+video_input)}
-        timeseries_sql["record_source"]=source[type_of_input]
+    source={"w":"webcam/LIVE.mp4","sp":"screen_part/LIVE.mp4","fs":"fullscreen/LIVE.mp4", "v":str("video"+"_"+video_input)}
+    timeseries_sql["record_source"]=source[type_of_input]
 
-        #Checking and create video_id (called frame id in SQL)
-        cnx = mysql.connector.connect(user = USER, password = "root",host = HOST,
-                                  database = DATABASE)
-        try:
-            cnx.is_connected()
-            print("Connection open")
-            cursor = cnx.cursor()
-            query = ("SELECT * FROM timeseries;")
-            cursor.execute(query)
-            results = cursor.fetchall()
+    #Checking and create video_id (called frame id in SQL)
+    cnx = mysql.connector.connect(user = USER, password = "root",host = HOST,
+                              database = DATABASE)
+    try:
+        cnx.is_connected()
+        print("Connection open")
+        cursor = cnx.cursor()
+        query = ("SELECT * FROM timeseries;")
+        cursor.execute(query)
+        results = cursor.fetchall()
 
-        except print("Connection is not successfully open"):
-            pass
+    except print("Connection is not successfully open"):
+        pass
 
-        timeseries_df=pd.DataFrame(results,columns=["id","frame_id","name","time","record_source","date"])
+    timeseries_df=pd.DataFrame(results,columns=["id","frame_id","name","time","record_source","date"])
 
-        if timeseries_df["frame_id"].max() > 0:
-            timeseries_sql["frame_id"]=(timeseries_df["frame_id"].max()+1)
-        else:
-            timeseries_sql["frame_id"]=1
+    if timeseries_df["frame_id"].max() > 0:
+        timeseries_sql["frame_id"]=(timeseries_df["frame_id"].max()+1)
+    else:
+        timeseries_sql["frame_id"]=1
 
 
-        timeseries_sql=timeseries_sql[['frame_id','name', 'time', 'record_source']]
+    timeseries_sql=timeseries_sql[['frame_id','name', 'time', 'record_source']]
 
-        # create sqlalchemy engine
-        engine = create_engine("mysql+pymysql://{user}:{pw}@35.192.100.10/{db}"
-                               .format(user='antero',
-                                       pw='root',
-                                       db='timeseries'))
+    # create sqlalchemy engine
+    engine = create_engine("mysql+pymysql://{user}:{pw}@35.192.100.10/{db}"
+                            .format(user='antero',
+                                    pw='root',
+                                    db='timeseries'))
 
-        timeseries_sql.to_sql('timeseries', con = engine, if_exists = "append",index=False)
+    timeseries_sql.to_sql('timeseries', con = engine, if_exists = "append",index=False)
 
-        print("Exported to SQL")
+    print("Exported to SQL")
 
 
     return fps

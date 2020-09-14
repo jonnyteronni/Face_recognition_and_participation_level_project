@@ -7,9 +7,14 @@ from from_sql_processing import stats
 from Plot_graphs import plot_bars
 import pandas as pd
 import cv2
-# from flask_caching import Cache
+import boto3
+from chalice import Chalice
 
-app = Flask(__name__)
+
+app = Chalice(app_name='web-api')
+dynamodb = boto3.resource('dynamodb')
+dynamodb_table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
+# app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 

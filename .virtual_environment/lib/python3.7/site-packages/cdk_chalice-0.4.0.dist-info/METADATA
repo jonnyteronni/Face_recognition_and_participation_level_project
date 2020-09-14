@@ -1,0 +1,29 @@
+Metadata-Version: 2.1
+Name: cdk-chalice
+Version: 0.4.0
+Summary: AWS CDK construct for AWS Chalice
+Home-page: https://github.com/alexpulver/cdk-chalice
+Author: Alex Pulver
+Author-email: alex.pulver@gmail.com
+License: MIT License
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: JavaScript
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Topic :: Software Development :: Code Generators
+Classifier: Topic :: Utilities
+Classifier: Typing :: Typed
+Requires-Python: >=3.6
+Requires-Dist: aws-cdk.aws-iam (>=1.18.0)
+Requires-Dist: aws-cdk.aws-s3-assets (>=1.18.0)
+Requires-Dist: aws-cdk.core (>=1.18.0)
+Requires-Dist: docker
+
+UNKNOWN
+
+

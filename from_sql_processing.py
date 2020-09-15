@@ -7,8 +7,8 @@ sys.path.append(os.path.abspath("../"))
 
 
 def stats(pwd_SQL):
-    cnx = mysql.connector.connect(user = 'antero', password = 'root',host ='35.192.100.10',
-                                  database = 'timeseries')
+    cnx = mysql.connector.connect(user = 'QWAm5RB9Wz', password = pwd_SQL,host ='remotemysql.com',
+                                  database = 'QWAm5RB9Wz')
 
     # #TO DELETE EXISTING ENTRIES IN THE DATABASE
     # try:
@@ -43,7 +43,7 @@ def stats(pwd_SQL):
 
     timeseries_df=timeseries_df[timeseries_df["frame_id"]==timeseries_df["frame_id"].max()]
 
-
+    cnx.close()
 
 
     for i in timeseries_df["name"].unique():
@@ -112,5 +112,13 @@ def stats(pwd_SQL):
     print(timeseries_df3)
 
     # plot_bars(timeseries_df,length_each_frame,video_name)
+    
+    # total_video_length=411.4
+    # upload_date="2020-09-09"
+    # unique_speakers_identified=3
+    # video_name="A-to-Be.mp4"
+    # length_each_frame=0.039965028171756636
+    # timeseries_raw_data_df=0
+    
 
     return total_video_length, upload_date,unique_speakers_identified,video_name, length_each_frame, timeseries_df3, timeseries_df, timeseries_raw_data_df

@@ -9,12 +9,11 @@ import time
 import pandas as pd
 from sqlalchemy import create_engine
 import mysql.connector
-import imageio
+import glob
+import math
 
 
-
-
-def face_recon(FILE_NAME,pwd_SQL):
+def face_recon(FILE_NAME,pwd_SQL,type_run):
 
     # Check the running OS to import mss
 
@@ -24,20 +23,26 @@ def face_recon(FILE_NAME,pwd_SQL):
     else:
         print('Recommend using linux to run this script.')
         from mss import mss
-
+    
+    
+    #Delete existing videos:
+    files = glob.glob('./static/video/*')
+    for f in files:
+        os.remove(f)
 
     # choose between webcam('w'), part of screen_part('sp'), fullscreen('fs') or video('v')
 
     # -------DASHBOARD--------
 
-    type_of_input = 'fs'
+    type_of_input = type_run
 
-
+    # FILE_NAME="teste"#######################
     video_input= 'static/video/'+str(FILE_NAME)
     # video_input= 'static/video/small.mp4'  ###########################
     # # SQL Password
     # pwd_SQL = "tKaNblvrQipO1!"
     # pwd_SQL = 'tasmania'
+    pwd_SQL="ydd5Eep7y1"
 
 
     # hog for cpu, cnn for GPU
@@ -79,8 +84,6 @@ def face_recon(FILE_NAME,pwd_SQL):
     elif type_of_input =='v':
         # with video
         webcam = cv2.VideoCapture(video_input)
-
-
 
 
 
@@ -131,20 +134,27 @@ def face_recon(FILE_NAME,pwd_SQL):
 
 
 
-    if (type_of_input == 'w') | (type_of_input == 'v'):
+    if  (type_of_input == 'v'):
 
         frame_width = int(webcam.get(3))
         frame_height = int(webcam.get(4))
         fps = webcam.get(cv2.CAP_PROP_FPS)
         length_each_frame = 1/fps
 
+    elif (type_of_input == 'w'):
+        
+        frame_width = int(webcam.get(3))
+        frame_height = int(webcam.get(4))
 
+        fps=1 #FAKE FPS
+        
 
 
     elif (type_of_input=='sp') | (type_of_input=='fs'):
         frame_width = monitor['width']
         frame_height = monitor['height']
-        fps=30
+        
+        fps=1 #Fake FPS
 
 
     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
@@ -199,11 +209,7 @@ def face_recon(FILE_NAME,pwd_SQL):
                 name = known_names[best_match_index]
                 none_counter=0
 
-
-
-
             face_names.append(name)
-
 
 
         # Facetime measures to time dictionary
@@ -270,30 +276,26 @@ def face_recon(FILE_NAME,pwd_SQL):
     cv2.destroyAllWindows()
     # define variables for output video
 
-    if type_of_input == 'w' or type_of_input=='v':
-    #     # frame size of webcam or video
-    #     frame_width = int(webcam.get(3))
-    #     frame_height = int(webcam.get(4))
-
-    #     # fps = int(webcam.get(cv2.CAP_PROP_FPS))
+    if type_of_input == 'w' or type_of_input=='v':       
         webcam.release()
-
-
-    if type_of_input=='sp' or type_of_input=='fs':
-        length_video=(time.time() - initial_total)
-        total_frames=frame_count
-        length_each_frame=length_video/total_frames
-
+        
 
     # Release handle to the webcam
     
     if type_of_input!='v':
+        
+        length_video=(time.time() - initial_total)
+        total_frames=frame_count
+        length_each_frame=length_video/total_frames
+        fps=1/length_each_frame
+        
         FILE_NAME = 'LIVE.mp4'
 
-
-    out.release()
-    os.system(f"ffmpeg -i static/video/output_temp.mp4 -vcodec libx264 static/video/final_{FILE_NAME} -y")
-
+        out.release()
+        os.system(f"ffmpeg -i static/video/output_temp.mp4 -filter:v fps=fps={math.floor(fps)} -vcodec libx264 static/video/final_{FILE_NAME} -y")
+    else:
+        out.release()
+        os.system(f"ffmpeg -i static/video/output_temp.mp4 -vcodec libx264 static/video/final_{FILE_NAME} -y")
 
     print("Video file processed")
 
@@ -303,13 +305,13 @@ def face_recon(FILE_NAME,pwd_SQL):
 
     #Creating timeseries to export to sql
     # enter your server IP address/domain name
-    HOST = "35.192.100.10" # or "domain.com"
+    HOST = "remotemysql.com" # or "domain.com"
     # database name, if you want just to connect to MySQL server, leave it empty
-    DATABASE = "timeseries"
+    DATABASE = "QWAm5RB9Wz"
     # this is the user you create
-    USER = "antero"
+    USER = "QWAm5RB9Wz"
     # user password
-    PASSWORD = "root"
+    PASSWORD = "ydd5Eep7y1"
     # connect to MySQL server
 
 
@@ -321,7 +323,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     timeseries_sql["record_source"]=source[type_of_input]
 
     #Checking and create video_id (called frame id in SQL)
-    cnx = mysql.connector.connect(user = USER, password = "root",host = HOST,
+    cnx = mysql.connector.connect(user = USER, password = PASSWORD,host = HOST,
                               database = DATABASE)
     try:
         cnx.is_connected()
@@ -343,16 +345,25 @@ def face_recon(FILE_NAME,pwd_SQL):
 
 
     timeseries_sql=timeseries_sql[['frame_id','name', 'time', 'record_source']]
+    
+    cnx.close()
 
     # create sqlalchemy engine
-    engine = create_engine("mysql+pymysql://{user}:{pw}@35.192.100.10/{db}"
-                            .format(user='antero',
-                                    pw='root',
-                                    db='timeseries'))
+    engine = create_engine("mysql+pymysql://{user}:{pw}@remotemysql.com/{db}"
+                            .format(user=USER,
+                                    pw=PASSWORD,
+                                    db=DATABASE))
 
     timeseries_sql.to_sql('timeseries', con = engine, if_exists = "append",index=False)
+    
+    engine.dispose()
 
     print("Exported to SQL")
+    
 
+    print("length_video",length_video)
+    print("total_frames",total_frames)
+    print("length_each_frame",length_each_frame)
+    print("fps",fps)
 
     return fps

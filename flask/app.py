@@ -91,34 +91,109 @@ def face_models():
 
     if request.method == 'POST':
         
-        if 'run_model' in request.form:
+        
+        if 'video_run_model' in request.form:
             # Model to encode images
             encode_images()
             print('Images encoded')
             
             
             # SQL Password
-            pwd_SQL = "tKaNblvrQipO1!"
+            # pwd_SQL = "tKaNblvrQipO1!"
             # pwd_SQL = 'tasmania'
+            pwd_SQL="ydd5Eep7y1"
             
             # Face recognition script
-            file_name = session.get('FILE_NAME')
-            fps = face_recon(file_name,pwd_SQL)
+            type_run="v"
+            file_names = session.get('FILE_NAME')
+            source={"w":"webcam/LIVE.mp4","sp":"screen_part/LIVE.mp4","fs":"fullscreen/LIVE.mp4", "v":file_names}
+            file_name=source[type_run]
+            
+            fps = face_recon(file_name,pwd_SQL,type_run)
             session['FPS'] = str(fps)
             print('Face recognition done')
             
             model_finished = "Model has finished running"                 
                       
-            
             return render_template("home/face_recognition.html",model_finished=model_finished)
         
+        
+        elif 'fs_run_model' in request.form:
+            # Model to encode images
+            encode_images()
+            print('Images encoded')
+            
+            
+            # SQL Password
+            pwd_SQL="ydd5Eep7y1"
+            
+            # Face recognition script
+            type_run="fs"
+            file_names = session.get('FILE_NAME')
+            source={"w":"webcam/LIVE.mp4","sp":"screen_part/LIVE.mp4","fs":"fullscreen/LIVE.mp4", "v":file_names}
+            file_name=source[type_run]
+            
+            fps = face_recon(file_name,pwd_SQL,type_run)
+            session['FPS'] = str(fps)
+            print('Face recognition done')
+            
+            model_finished = "Model has finished running"                 
+                      
+            return render_template("home/face_recognition.html",model_finished=model_finished)
+        
+        elif 'w_run_model' in request.form:
+            # Model to encode images
+            encode_images()
+            print('Images encoded')
+            
+            
+            # SQL Password
+            pwd_SQL="ydd5Eep7y1"
+            
+            # Face recognition script
+            type_run="w"
+            file_names = session.get('FILE_NAME')
+            source={"w":"webcam/LIVE.mp4","sp":"screen_part/LIVE.mp4","fs":"fullscreen/LIVE.mp4", "v":file_names}
+            file_name=source[type_run]
+            
+            fps = face_recon(file_name,pwd_SQL,type_run)
+            session['FPS'] = str(fps)
+            print('Face recognition done')
+            
+            model_finished = "Model has finished running"                 
+                      
+            return render_template("home/face_recognition.html",model_finished=model_finished)
+        
+        elif 'sp_run_model' in request.form:
+            # Model to encode images
+            encode_images()
+            print('Images encoded')
+            
+            
+            # SQL Password
+            pwd_SQL="ydd5Eep7y1"
+            
+            # Face recognition script
+            type_run="sp"
+            file_names = session.get('FILE_NAME')
+            source={"w":"webcam/LIVE.mp4","sp":"screen_part/LIVE.mp4","fs":"fullscreen/LIVE.mp4", "v":file_names}
+            file_name=source[type_run]
+            
+            fps = face_recon(file_name,pwd_SQL,type_run)
+            session['FPS'] = str(fps)
+            print('Face recognition done')
+            
+            model_finished = "Model has finished running"                 
+                      
+            return render_template("home/face_recognition.html",model_finished=model_finished)
         
         elif 'show_video' in request.form:
                        
             try:
                 # SQL Password
-                pwd_SQL = "tKaNblvrQipO1!"
+                # pwd_SQL = "tKaNblvrQipO1!"
                 # pwd_SQL = 'tasmania'
+                pwd_SQL="ydd5Eep7y1"
                 session['SQL_PASSWORD'] = str(pwd_SQL)
                 
     
@@ -126,10 +201,11 @@ def face_models():
                 total_video_length, upload_date,unique_speakers_identified,video_name,length_each_frame, final_stats_df, timeseries_df,df_raw_data = stats(pwd_SQL)
                 
     
-                
                 video = f'/static/video/final_{video_name}'
                 facetime_bar_gif=f'/static/gif/bar_graph_{video_name}'
                 # facetime_bar_gif = None
+                
+                               
                 
                 return render_template("home/face_recognition.html", \
                                        videos = video,tables=[final_stats_df.to_html(classes='table table-hover')],\
@@ -189,4 +265,4 @@ def stats_function():
 
 
 if __name__ == "__main__":
-    app.run(port=4555, debug=True)
+    app.run(port=4555, debug=False)

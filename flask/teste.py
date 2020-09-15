@@ -14,7 +14,7 @@ from Face_recognition import face_recon
 # from from_sql_processing import stats
 
 
-pwd_SQL = "root"
+pwd_SQL = "ydd5Eep7y1"
 
 face_recon('Speaker_small.mp4',pwd_SQL)
 # stats(pwd_SQL)

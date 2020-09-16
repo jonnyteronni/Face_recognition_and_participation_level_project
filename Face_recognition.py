@@ -292,7 +292,7 @@ def face_recon(FILE_NAME,pwd_SQL,type_run):
         FILE_NAME = 'LIVE.mp4'
 
         out.release()
-        os.system(f"ffmpeg -i static/video/output_temp.mp4 -filter:v fps=fps={math.floor(fps)} -vcodec libx264 static/video/final_{FILE_NAME} -y")
+        os.system(f"ffmpeg -i static/video/output_temp.mp4 -filter:v fps=fps={math.ceil(fps)} -vcodec libx264 static/video/final_{FILE_NAME} -y")
     else:
         out.release()
         os.system(f"ffmpeg -i static/video/output_temp.mp4 -vcodec libx264 static/video/final_{FILE_NAME} -y")
@@ -361,9 +361,9 @@ def face_recon(FILE_NAME,pwd_SQL,type_run):
     print("Exported to SQL")
     
 
-    print("length_video",length_video)
-    print("total_frames",total_frames)
-    print("length_each_frame",length_each_frame)
-    print("fps",fps)
+    # print("length_video",length_video)
+    # print("total_frames",total_frames)
+    # print("length_each_frame",length_each_frame)
+    # print("fps",fps)
 
     return fps

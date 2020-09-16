@@ -1,9 +1,9 @@
 # Face_recognition_project_and_participation_level
 
-(./images/1.jpg)
+![Image1](/images/1.png)
 
-(./images/2.jpg)
+![Image2](/images/2.png)
 
-(./images/3.jpg)
+![Image3](/images/3.png)
 
-(./images/4.jpg)
+![Image4](/images/4.png)

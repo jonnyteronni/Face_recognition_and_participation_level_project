@@ -3,10 +3,12 @@ import os, sys
 import mysql.connector
 import pandas as pd
 sys.path.append(os.path.abspath("../"))
-# from Plot_graphs import plot_bars
+from Plot_graphs import plot_bars
 
 
 def stats(pwd_SQL):
+    # cnx = mysql.connector.connect(user = 'jonnyteronni', password = pwd_SQL,host ='face-recognition-eu.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com',
+    #                               database = 'face_recognition_eu_db')
     cnx = mysql.connector.connect(user = 'QWAm5RB9Wz', password = pwd_SQL,host ='remotemysql.com',
                                   database = 'QWAm5RB9Wz')
 

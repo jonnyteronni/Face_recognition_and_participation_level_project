@@ -42,7 +42,7 @@ def face_recon(FILE_NAME,pwd_SQL,type_run):
     # # SQL Password
     # pwd_SQL = "tKaNblvrQipO1!"
     # pwd_SQL = 'tasmania'
-    pwd_SQL="ydd5Eep7y1"
+    # pwd_SQL="ydd5Eep7y1"
 
 
     # hog for cpu, cnn for GPU
@@ -60,7 +60,7 @@ def face_recon(FILE_NAME,pwd_SQL,type_run):
 
     # Frame resizing (integers 1 to X)
 
-    RESIZE_FRAME = 3
+    RESIZE_FRAME = 1
 
 
     # -------------
@@ -300,17 +300,26 @@ def face_recon(FILE_NAME,pwd_SQL,type_run):
     print("Video file processed")
 
 
+    #Delete existing images dataset:
+    
+    files = glob.glob('./static/images/*')
+    for f in files:
+        os.remove(f)
 
 
 
     #Creating timeseries to export to sql
     # enter your server IP address/domain name
-    HOST = "remotemysql.com" # or "domain.com"
+    # HOST = "face-recognition-eu.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com" # or "domain.com"
+    HOST = "remotemysql.com"
     # database name, if you want just to connect to MySQL server, leave it empty
+    # DATABASE = "face_recognition_eu_db"
     DATABASE = "QWAm5RB9Wz"
     # this is the user you create
+    # USER = "jonnyteronni"
     USER = "QWAm5RB9Wz"
     # user password
+    # PASSWORD = "66a97U]){7{}"
     PASSWORD = "ydd5Eep7y1"
     # connect to MySQL server
 
@@ -359,6 +368,8 @@ def face_recon(FILE_NAME,pwd_SQL,type_run):
     engine.dispose()
 
     print("Exported to SQL")
+    
+
     
 
     # print("length_video",length_video)

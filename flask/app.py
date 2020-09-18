@@ -7,6 +7,7 @@ from from_sql_processing import stats
 from Plot_graphs import plot_bars
 import pandas as pd
 import cv2
+import glob
 # from flask_caching import Cache
 
 app = Flask(__name__)
@@ -91,17 +92,14 @@ def face_models():
 
     if request.method == 'POST':
         
+        # SQL Password
+        pwd_SQL="ydd5Eep7y1" #indianos
+        # pwd_SQL="66a97U]){7{}"
         
         if 'video_run_model' in request.form:
             # Model to encode images
             encode_images()
             print('Images encoded')
-            
-            
-            # SQL Password
-            # pwd_SQL = "tKaNblvrQipO1!"
-            # pwd_SQL = 'tasmania'
-            pwd_SQL="ydd5Eep7y1"
             
             # Face recognition script
             type_run="v"
@@ -122,11 +120,7 @@ def face_models():
             # Model to encode images
             encode_images()
             print('Images encoded')
-            
-            
-            # SQL Password
-            pwd_SQL="ydd5Eep7y1"
-            
+                       
             # Face recognition script
             type_run="fs"
             file_names = session.get('FILE_NAME')
@@ -145,10 +139,6 @@ def face_models():
             # Model to encode images
             encode_images()
             print('Images encoded')
-            
-            
-            # SQL Password
-            pwd_SQL="ydd5Eep7y1"
             
             # Face recognition script
             type_run="w"
@@ -169,10 +159,6 @@ def face_models():
             encode_images()
             print('Images encoded')
             
-            
-            # SQL Password
-            pwd_SQL="ydd5Eep7y1"
-            
             # Face recognition script
             type_run="sp"
             file_names = session.get('FILE_NAME')
@@ -190,10 +176,6 @@ def face_models():
         elif 'show_video' in request.form:
                        
             try:
-                # SQL Password
-                # pwd_SQL = "tKaNblvrQipO1!"
-                # pwd_SQL = 'tasmania'
-                pwd_SQL="ydd5Eep7y1"
                 session['SQL_PASSWORD'] = str(pwd_SQL)
                 
     
@@ -214,6 +196,9 @@ def face_models():
                                        upload_date = upload_date,\
                                        unique_speakers_identified = unique_speakers_identified,\
                                        video_name = video_name)
+                
+
+                    
             except TypeError as err:
                 print(err)
                 return render_template("home/face_recognition.html")
@@ -226,7 +211,7 @@ def face_models():
 @app.route("/ui-tables")
 def tables():
 
-
+        
     pwd_SQL = session.get('SQL_PASSWORD')
     
     df_raw_data = stats(pwd_SQL)[7]
@@ -252,6 +237,7 @@ def tables():
 
 @app.route("/stats")
 def stats_function():
+    
     
     return render_template("home/stats.html")
 

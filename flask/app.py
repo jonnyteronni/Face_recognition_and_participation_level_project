@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath("../"))
 from Encode_images_for_face_recognition_byfilename import encode_images
 from Face_recognition import face_recon
 from from_sql_processing import stats
-from Plot_graphs import plot_bars
+from Plot_graphs import plots
 import pandas as pd
 import cv2
 import glob
@@ -51,7 +51,7 @@ def upload_video():
     if request.method == 'POST':
         # Video
         if 'video_form' in request.form:
-            target = os.path.join(APP_ROOT, 'static/video')
+            target = os.path.join(APP_ROOT, 'static/video/original')
         
             if not os.path.isdir(target):
                 os.mkdir(target)
@@ -184,8 +184,9 @@ def face_models():
                 
     
                 video = f'/static/video/final_{video_name}'
-                facetime_bar_gif=f'/static/gif/bar_graph_{video_name}'
-                # facetime_bar_gif = None
+                facetime_bar_gif=f'/static/plot/bar_graph_{video_name}'
+                lineplot='/static/plot/lineplot.png'
+                barplot='/static/plot/barplot.png'
                 
                                
                 
@@ -195,7 +196,9 @@ def face_models():
                                        total_video_length = total_video_length,\
                                        upload_date = upload_date,\
                                        unique_speakers_identified = unique_speakers_identified,\
-                                       video_name = video_name)
+                                       video_name = video_name,\
+                                       lineplot = lineplot,\
+                                       barplot = barplot)
                 
 
                     

@@ -33,7 +33,7 @@ def face_recon(FILE_NAME,pwd_SQL,type_run):
     type_of_input = type_run
 
     # FILE_NAME="teste"#######################
-    video_input= 'static/video/original/'+str(FILE_NAME)
+    video_input= 'static/video/'+str(FILE_NAME)
     # video_input= 'static/video/small.mp4'  ###########################
     # # SQL Password
     # pwd_SQL = "tKaNblvrQipO1!"
@@ -43,9 +43,7 @@ def face_recon(FILE_NAME,pwd_SQL,type_run):
         #Delete existing videos:
     files = glob.glob('./static/video/*')
     for f in files:
-        print(f)
-        if f!="./static/video\original":
-            os.remove(f)
+        os.remove(f)
 
 
     # hog for cpu, cnn for GPU
@@ -309,7 +307,7 @@ def face_recon(FILE_NAME,pwd_SQL,type_run):
     for f in files:
         os.remove(f)
     
-    files = glob.glob('./static/video/original/*')
+    files = glob.glob('./static/video/original*')
     for f in files:
         os.remove(f)
 

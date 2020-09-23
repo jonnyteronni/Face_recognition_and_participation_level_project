@@ -36,11 +36,11 @@ def plots(timeseries_df):
     
     
     totals=timeseries_df2.max().sort_values(ascending=False)
-    height=4    
+    height1=4    
     if totals.shape[0]>3:
-        height=height+(totals.shape[0]-3)*0.25
+        height1=height1+(totals.shape[0]-3)*0.25
     
-    rcParams['figure.figsize'] = [15, height]
+    #rcParams['figure.figsize'] = 15, height1
     rcParams['figure.dpi'] =300
     rcParams['savefig.dpi'] = 300
     
@@ -66,14 +66,14 @@ def plots(timeseries_df):
     
     plt.clf() 
     colorss=[]
+    plt.figure(figsize=(15,height1))
     for i in totals.index:
         
         colorss.append(color_set.pop())
-    
         plt.plot(time_cumsum, timeseries_df2[i],linewidth=2.5,color=colorss[-1],label=i)
     
-        plt.xlim(0,time_cumsum.max()*1.05)
-        plt.ylim(0,timeseries_df2.max().max()*1.05)
+    plt.xlim(0,time_cumsum.max()*1.05)
+    plt.ylim(0,timeseries_df2.max().max()*1.05)
         
     # plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left',labelcolor='w')
     
@@ -94,10 +94,12 @@ def plots(timeseries_df):
     
     
     # Bar plot:
-    height=1.5   
+    height2=1.5   
     if totals.shape[0]>2:
-        height=height+(totals.shape[0]-2)*0.30
-    plt.figure(figsize=(15,height))
+        height2=height2+(totals.shape[0]-2)*0.30
+      
+    #rcParams['figure.figsize'] = 15, height2
+    plt.figure(figsize=(15,height2))
     plt.barh(timeseries_df2.max().sort_values(ascending=True).index, timeseries_df2.max().sort_values(ascending=True), align='center',color=colorss[::-1])
     plt.xlim(xmax=math.ceil(1.05*max(timeseries_df2.max().values)))
     plt.xlabel('Facetime total (s)')

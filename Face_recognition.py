@@ -63,7 +63,7 @@ def face_recon(FILE_NAME,pwd_SQL,type_run):
 
     # Frame resizing (integers 1 to X)
 
-    RESIZE_FRAME = 2
+    RESIZE_FRAME = 3
 
 
     # -------------
@@ -83,7 +83,7 @@ def face_recon(FILE_NAME,pwd_SQL,type_run):
         monitor = {"top": 200, "left": 0, "width": 1000, "height": 500}
     elif type_of_input == 'fs':
         # with fullscreen
-        monitor = sct.monitors[2]
+        monitor = sct.monitors[1]
     elif type_of_input =='v':
         # with video
         webcam = cv2.VideoCapture(video_input)

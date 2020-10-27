@@ -30,7 +30,7 @@ def face_recon(FILE_NAME,pwd_SQL):
 
     # -------DASHBOARD--------
 
-    type_of_input = 'fs'
+    type_of_input = 'v'
 
 
     video_input= 'static/video/'+str(FILE_NAME)
@@ -60,7 +60,7 @@ def face_recon(FILE_NAME,pwd_SQL):
 
     # -------------
 
-    sct=mss()
+    # sct=mss()
 
 
     if type_of_input == 'w':
@@ -72,9 +72,11 @@ def face_recon(FILE_NAME,pwd_SQL):
 
     elif type_of_input == 'sp':
         # with screen_part
+        sct=mss()
         monitor = {"top": 200, "left": 0, "width": 1000, "height": 500}
     elif type_of_input == 'fs':
         # with fullscreen
+        sct=mss()
         monitor = sct.monitors[2]
     elif type_of_input =='v':
         # with video
@@ -303,13 +305,13 @@ def face_recon(FILE_NAME,pwd_SQL):
 
     #Creating timeseries to export to sql
     # enter your server IP address/domain name
-    HOST = "35.192.100.10" # or "domain.com"
+    HOST = "face-recognition-eu.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com" 
     # database name, if you want just to connect to MySQL server, leave it empty
-    DATABASE = "timeseries"
+    DATABASE = "face_recognition_eu_db"
     # this is the user you create
-    USER = "antero"
+    USER = "jonnyteronni"
     # user password
-    PASSWORD = "root"
+    PASSWORD = "SOMEPASSWORD"
     # connect to MySQL server
 
 
@@ -321,7 +323,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     timeseries_sql["record_source"]=source[type_of_input]
 
     #Checking and create video_id (called frame id in SQL)
-    cnx = mysql.connector.connect(user = USER, password = "root",host = HOST,
+    cnx = mysql.connector.connect(user = USER, password = PASSWORD, host = HOST,
                               database = DATABASE)
     try:
         cnx.is_connected()
@@ -345,10 +347,10 @@ def face_recon(FILE_NAME,pwd_SQL):
     timeseries_sql=timeseries_sql[['frame_id','name', 'time', 'record_source']]
 
     # create sqlalchemy engine
-    engine = create_engine("mysql+pymysql://{user}:{pw}@35.192.100.10/{db}"
-                            .format(user='antero',
-                                    pw='root',
-                                    db='timeseries'))
+    engine = create_engine("mysql+pymysql://{user}:{pw}@face-recognition-eu.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com/{db}"
+                            .format(user=USER,
+                                    pw=PASSWORD,
+                                    db=DATABASE))
 
     timeseries_sql.to_sql('timeseries', con = engine, if_exists = "append",index=False)
 

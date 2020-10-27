@@ -7,8 +7,9 @@ sys.path.append(os.path.abspath("../"))
 
 
 def stats(pwd_SQL):
-    cnx = mysql.connector.connect(user = 'antero', password = 'root',host ='35.192.100.10',
-                                  database = 'timeseries')
+    cnx = mysql.connector.connect(user = 'jonnyteronni', password = 'SOMEPASSWORD',host ='face-recognition-eu.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com',
+                            database = 'face_recognition_eu_db')
+
 
     # #TO DELETE EXISTING ENTRIES IN THE DATABASE
     # try:

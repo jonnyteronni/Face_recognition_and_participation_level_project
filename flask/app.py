@@ -7,14 +7,14 @@ from from_sql_processing import stats
 from Plot_graphs import plot_bars
 import pandas as pd
 import cv2
-import boto3
-from chalice import Chalice
+# import boto3
+# from chalice import Chalice
 
 
-app = Chalice(app_name='web-api')
-dynamodb = boto3.resource('dynamodb')
-dynamodb_table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
-# app = Flask(__name__)
+# app = Chalice(app_name='web-api')
+# dynamodb = boto3.resource('dynamodb')
+# dynamodb_table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
+app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -194,4 +194,4 @@ def stats_function():
 
 
 if __name__ == "__main__":
-    app.run(port=4555, debug=True)
+    app.run(host='0.0.0.0',port=80)#, debug=True)

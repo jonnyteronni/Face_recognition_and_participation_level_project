@@ -9,12 +9,12 @@ services:
 before_script:
     - pip install docker-compose
 
-install:
-    - pip install -U pip
-    - pip install -U pytest
+#install:
+#    - pip install -U pip
+#    - pip install -U pytest
   
 script:
-    - docker-compose run app sh -c "pytest test.py -p no:cacheprovider"
+    - docker-compose up #run app sh -c "pytest test.py -p no:cacheprovider"
 
 deploy:
     provider: script

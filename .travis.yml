@@ -14,7 +14,7 @@ install:
     - pip install -U pytest
   
 script:
-    - docker-compose run app sh -c "pytest -p no:cacheprovider"
+    - docker-compose run app sh -c "pytest test.py -p no:cacheprovider"
 
 deploy:
     provider: script

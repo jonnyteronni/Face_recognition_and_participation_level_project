@@ -6,12 +6,10 @@ python:
 services:
     - docker
 
-before_install:
-    - pip install -U pip
-    - pip install -U pytest
 
 install:
-  - pip install ".[test]" . # install package + test dependencies
+    - pip install -U pip
+    - pip install -U pytest
   
 script:
     - pytest # run tests

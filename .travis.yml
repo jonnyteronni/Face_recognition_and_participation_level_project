@@ -1,0 +1,15 @@
+language: python
+sudo: true
+python:
+    - "3.8"
+
+services:
+    - docker
+
+
+deploy:
+    provider: script
+    skip-cleanup: true
+    script: bash travis/deploy.sh
+    on:
+        branch: cloud_development

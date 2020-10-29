@@ -3,25 +3,13 @@ import os, sys
 import mysql.connector
 import pandas as pd
 sys.path.append(os.path.abspath("../"))
-# from Plot_graphs import plot_bars
+
 
 
 def stats(pwd_SQL):
-    cnx = mysql.connector.connect(user = 'jonnyteronni', password = 'SOMEPASSWORD',host ='face-recognition-eu.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com',
+    cnx = mysql.connector.connect(user = 'jonnyteronni', password = '66a97U]){7{}',host ='face-recognition-eu.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com',
                             database = 'face_recognition_eu_db')
 
-
-    # #TO DELETE EXISTING ENTRIES IN THE DATABASE
-    # try:
-    #     cnx.is_connected()
-    #     print("Connection open")
-    #     cursor = cnx.cursor()
-    #     delete = ("DELETE FROM timeseries;")
-    #     cursor.execute(delete)
-    #     cnx.commit()
-
-    # except print("Connection is not successfully open"):
-    #     pass
 
     try:
         cnx.is_connected()
@@ -100,9 +88,6 @@ def stats(pwd_SQL):
     timeseries_df3["Facetime %"]=timeseries_df3[str("Facetime"+" "+label)].apply(lambda x: round(x*100/timeseries_df3.sum(),1))
     timeseries_df3[str("Facetime"+" "+label)]=timeseries_df3[str("Facetime"+" "+label)].round(1)
 
-    #SUGESTION FOR FRONTEND:
-    # Video:"input.mp4" | Lenght of: 92.8s | Updloaded at: 2020-08-25
-    # Totak Speakers identified: 6
 
 
 
@@ -112,6 +97,5 @@ def stats(pwd_SQL):
 
     print(timeseries_df3)
 
-    # plot_bars(timeseries_df,length_each_frame,video_name)
 
     return total_video_length, upload_date,unique_speakers_identified,video_name, length_each_frame, timeseries_df3, timeseries_df, timeseries_raw_data_df

@@ -39,27 +39,15 @@ RUN cd ~ && \
 # Create app folder
 RUN mkdir /root/face_app/
 
+
+
 # Copy app
 COPY . /root/face_app/
 
+
+
 RUN cd /root/face_app/flask/ && \
     pip3 install -r requirements.txt
-
-
-
-# Install Flask
-#RUN cd ~ && \
-#    pip3 install flask flask-cors
-
-
-# Install Face-Recognition Python Library
-#RUN cd ~ && \
-#    mkdir -p face_recognition && \
-#    git clone https://github.com/ageitgey/face_recognition.git face_recognition/ && \
-#    cd face_recognition/ && \
-#    pip3 install -r requirements.txt && \
-#    python3 setup.py install
-
 
 
 

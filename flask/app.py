@@ -7,25 +7,10 @@ from from_sql_processing import stats
 from Plot_graphs import plot_bars
 import pandas as pd
 import cv2
-# import boto3
-# from chalice import Chalice
 
-
-# app = Chalice(app_name='web-api')
-# dynamodb = boto3.resource('dynamodb')
-# dynamodb_table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
 app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-
-
-# # Cache solution
-# cache = Cache(app,config={'CACHE_TYPE': 'null'})
-
-# # app.config["CACHE_TYPE"] = "null"
-
-# cache.init_app(app)
-
 
 
 
@@ -104,7 +89,7 @@ def face_models():
             
             # SQL Password
             pwd_SQL = "tKaNblvrQipO1!"
-            # pwd_SQL = 'tasmania'
+
             
             # Face recognition script
             file_name = session.get('FILE_NAME')
@@ -123,7 +108,6 @@ def face_models():
             try:
                 # SQL Password
                 pwd_SQL = "tKaNblvrQipO1!"
-                # pwd_SQL = 'tasmania'
                 session['SQL_PASSWORD'] = str(pwd_SQL)
                 
     
@@ -134,7 +118,7 @@ def face_models():
                 
                 video = f'/static/video/final_{video_name}'
                 facetime_bar_gif=f'/static/gif/bar_graph_{video_name}'
-                # facetime_bar_gif = None
+
                 
                 return render_template("home/face_recognition.html", \
                                        videos = video,tables=[final_stats_df.to_html(classes='table table-hover')],\
@@ -168,14 +152,12 @@ def tables():
     df_raw_data['Video_id'] = df_raw_data['frame_id']
     df_raw_data.drop('frame_id', axis = 1, inplace=True)
     
-    # df_raw_data = df_raw_data.set_index('Video_id')
     
     
     
     df_raw_data = df_raw_data[['Video_id','name','time','record_source','date']]
     df_group_data = df_raw_data.groupby(by=['Video_id','name','record_source','date']).sum()
-    # df_raw_data.sort_values(by=['Video_id'], ascending=False, inplace=True)
-    # df_group_data= df_raw_data.groupby(by=['Video_id','record_source','date']).sum()
+
 
     return render_template("home/ui-tables.html",tables=[df_group_data.to_html(classes='table table-hover')])
 
@@ -184,12 +166,6 @@ def stats_function():
     
     return render_template("home/stats.html")
 
-    # <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    # <meta http-equiv="Pragma" content="no-cache">
-    # <meta http-equiv="Expires" content="0">
-
-# <video  class="card-body" height=600 style="border:0;border:none"  src={{videos}}> </video>
-# <video height=600 src={{videos}} controls autoplay loop> </video>
   
 
 

@@ -311,7 +311,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     # this is the user you create
     USER = "jonnyteronni"
     # user password
-    PASSWORD = "SOMEPASSWORD"
+    PASSWORD = "66a97U]){7{}"
     # connect to MySQL server
 
 

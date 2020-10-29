@@ -44,13 +44,14 @@ RUN mkdir /root/face_app/
 # Copy app
 COPY . /root/face_app/
 
+# face_app as workdir
+WORKDIR /root/face_app
 
-
-RUN cd /root/face_app/flask/ && \
+RUN cd flask/ && \
     pip3 install -r requirements.txt
 
 
 
 # Start the app
-CMD cd /root/face_app/flask/ && \
+CMD cd flask/ && \
     python3 app.py

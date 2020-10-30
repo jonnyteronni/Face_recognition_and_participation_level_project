@@ -12,9 +12,12 @@ before_script:
 #install:
 #    - pip install -U pip
 #    - pip install -U pytest
-  
+
 script:
-    - docker-compose up #run app sh -c "pytest test.py -p no:cacheprovider"
+    - docker-compose up --build -d #run app sh -c "pytest test.py -p no:cacheprovider"
+
+after_script:
+    - docker-compose down
 
 deploy:
     provider: script

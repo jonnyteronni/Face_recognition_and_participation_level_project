@@ -53,5 +53,5 @@ RUN cd flask/ && \
 
 
 # Start the app
-# CMD cd flask/ && \
-#    python3 app.py
+CMD cd flask/ && \
+    python3 app.py

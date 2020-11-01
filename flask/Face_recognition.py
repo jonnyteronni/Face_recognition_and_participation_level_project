@@ -305,13 +305,13 @@ def face_recon(FILE_NAME,pwd_SQL):
 
     #Creating timeseries to export to sql
     # enter your server IP address/domain name
-    HOST = "face-recognition-eu.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com" 
+    HOST = "face-recognition-ecs2.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com" 
     # database name, if you want just to connect to MySQL server, leave it empty
     DATABASE = "face_recognition_eu_db"
     # this is the user you create
     USER = "jonnyteronni"
     # user password
-    PASSWORD = "66a97U]){7{}"
+    PASSWORD = "pdiSrJDNHccN"
     # connect to MySQL server
 
 
@@ -347,7 +347,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     timeseries_sql=timeseries_sql[['frame_id','name', 'time', 'record_source']]
 
     # create sqlalchemy engine
-    engine = create_engine("mysql+pymysql://{user}:{pw}@face-recognition-eu.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com/{db}"
+    engine = create_engine("mysql+pymysql://{user}:{pw}@face-recognition-ecs2.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com/{db}"
                             .format(user=USER,
                                     pw=PASSWORD,
                                     db=DATABASE))

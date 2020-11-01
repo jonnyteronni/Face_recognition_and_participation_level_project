@@ -7,9 +7,10 @@ sys.path.append(os.path.abspath("../"))
 
 
 def stats(pwd_SQL):
-    cnx = mysql.connector.connect(user = 'jonnyteronni', password = '66a97U]){7{}',host ='face-recognition-eu.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com',
-                            database = 'face_recognition_eu_db')
-
+    # cnx = mysql.connector.connect(user = 'jonnyteronni', password = '66a97U]){7{}',host ='face-recognition-eu.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com',
+    #                        database = 'face_recognition_eu_db')
+    cnx = mysql.connector.connect(user = 'jonnyteronni', password = 'pdiSrJDNHccN',host ='face-recognition-ecs2.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com',
+                            database = 'face_recognition_ecs2_db')
 
     try:
         cnx.is_connected()

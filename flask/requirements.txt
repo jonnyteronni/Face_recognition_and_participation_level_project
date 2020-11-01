@@ -8,3 +8,4 @@ sqlalchemy
 mysql-connector
 imageio
 matplotlib
+PyMySQL

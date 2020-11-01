@@ -35,6 +35,10 @@ RUN cd ~ && \
     cd  dlib/ && \
     python3 setup.py install --yes USE_AVX_INSTRUCTIONS
 
+# Install ffmpeg
+RUN cd ~ && \
+    apt install ffmpeg -y
+
 
 # Create app folder
 RUN mkdir /root/face_app/

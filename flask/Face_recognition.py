@@ -307,7 +307,7 @@ def face_recon(FILE_NAME,pwd_SQL):
     # enter your server IP address/domain name
     HOST = "face-recognition-ecs2.cdvhsbdbaawd.eu-west-2.rds.amazonaws.com" 
     # database name, if you want just to connect to MySQL server, leave it empty
-    DATABASE = "face_recognition_eu_db"
+    DATABASE = "face_recognition_ecs2_db"
     # this is the user you create
     USER = "jonnyteronni"
     # user password
